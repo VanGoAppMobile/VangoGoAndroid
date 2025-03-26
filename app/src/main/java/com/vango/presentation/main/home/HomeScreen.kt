@@ -90,6 +90,7 @@ fun HomeScreen(
     var showMapCreatePointRouteMenu by remember { mutableStateOf(false) }
     var showBottomActionButtons by remember { mutableStateOf(true) }
     var isSelectingPoint by remember { mutableStateOf(false) }
+    var isPoint by remember { mutableStateOf(false) }
     var showMapNewPointMenu by remember { mutableStateOf(false) }
     var showMapNewPointNameMenu by remember { mutableStateOf(false) }
     var showMapNewPointTagMenu by remember { mutableStateOf(false) }
@@ -417,7 +418,15 @@ fun HomeScreen(
                         showMapCreatePointRouteMenu = false
                         showMapNewPointMenu = true
                         isSelectingPoint = true
+                        isPoint = true
                         println("DEBUG: isSelectingPoint = $isSelectingPoint")
+                    }
+                    else{
+                        println("DEBUG: Seleccionando CREATE_ROUTE")
+                        showMapCreatePointRouteMenu = false
+                        showMapNewPointMenu = true
+                        isSelectingPoint = true
+                        isPoint = false
                     }
                 },
                 onDismiss = {
@@ -443,6 +452,7 @@ fun HomeScreen(
                     isSelectingPoint = true
 
                 },
+                isPoint = isPoint,
                 onConfirm = {
                     showMapNewPointMenu = false
                     showMapNewPointNameMenu = true

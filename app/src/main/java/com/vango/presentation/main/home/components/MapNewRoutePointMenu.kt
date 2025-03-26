@@ -227,10 +227,14 @@ fun MapNewRoutePointMenu(
     }
 }
 
+
+
+
 @Composable
 fun MapNewPointMenu(
     selectedPoint: LatLng?,
     selectedAddress: String?,
+    isPoint: Boolean?,
     onDismiss: () -> Unit,
     onClearAndDismiss: () -> Unit,
     onConfirm: () -> Unit,
@@ -303,7 +307,7 @@ fun MapNewPointMenu(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "Localiza el nuevo punto",
+                        text = if(isPoint == true) "Localiza el nuevo punto" else "Localiza el primer punto de la ruta",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = BlackGray
@@ -433,6 +437,9 @@ fun MapNewPointMenu(
         }
     }
 }
+
+
+
 
 
 @Composable
