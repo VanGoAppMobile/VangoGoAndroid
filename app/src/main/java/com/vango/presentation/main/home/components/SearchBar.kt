@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.vango.R
 import com.vango.domain.model.SearchResult
+import com.vango.presentation.theme.BlackGray
 
 @Composable
 fun SearchBar(
@@ -83,7 +84,7 @@ fun SearchBar(
                         modifier = Modifier
                             .size(16.dp)
                             .clickable { performSearch(searchQuery) },
-                        tint = Color.Black
+                        tint = BlackGray
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -111,7 +112,7 @@ fun SearchBar(
                             onSearchQueryChange("")
                             focusManager.clearFocus()
                         },
-                    tint = Color.Black
+                    tint = BlackGray
                 )
             }
         },
@@ -124,7 +125,7 @@ fun SearchBar(
                         .size(24.dp)
                         .padding(end = 8.dp)
                         .clickable { },
-                    tint = Color.Black
+                    tint = BlackGray
                 )
             }
         },
@@ -177,7 +178,7 @@ fun SearchBar(
                             painter = painterResource(id = R.drawable.mark),
                             contentDescription = "Ícono del lugar",
                             modifier = Modifier.size(18.dp),
-                            tint = Color.Black
+                            tint = BlackGray
                         )
 
                         Text(
@@ -193,7 +194,7 @@ fun SearchBar(
                         Text(
                             text = result.name,
                             fontSize = 14.sp,
-                            color = Color.Black,
+                            color = BlackGray,
                             fontWeight = FontWeight.SemiBold
                         )
 

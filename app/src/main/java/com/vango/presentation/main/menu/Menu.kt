@@ -42,6 +42,7 @@ import coil.compose.AsyncImage
 import com.vango.R
 import com.vango.presentation.theme.BackgroundButtonColor
 import com.vango.presentation.theme.BackgroundColorButtonPrincipal
+import com.vango.presentation.theme.BlackGray
 import com.vango.presentation.theme.MainColor
 import com.vango.presentation.theme.TextColor
 
@@ -64,7 +65,6 @@ fun MenuScreen(
             .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Fila con el botón de cerrar y el título
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -91,7 +91,6 @@ fun MenuScreen(
                             },
                         tint = Color.White
                     )
-
                 }
             }
             Text(
@@ -100,19 +99,17 @@ fun MenuScreen(
                 fontWeight = FontWeight.Bold,
                 color = TextColor
             )
-            Spacer(modifier = Modifier.width(40.dp)) // Espacio reservado para equilibrar
+            Spacer(modifier = Modifier.width(40.dp))
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Columna central con la foto, nick y tipo de cuenta
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Box() {
                 if (profilePictureUri.isNullOrEmpty()) {
-                    // Mostrar un placeholder si no hay imagen seleccionada
                     Image(
                         painter = painterResource(id = R.drawable.default_image_profile),
                         contentDescription = "Foto de perfil",
@@ -122,9 +119,8 @@ fun MenuScreen(
                         contentScale = ContentScale.Crop
                     )
                 } else {
-                    // Mostrar la imagen cargada desde la URI
                     AsyncImage(
-                        model = profilePictureUri, // URI de la imagen seleccionada
+                        model = profilePictureUri,
                         contentDescription = "Foto de perfil",
                         modifier = Modifier
                             .size(80.dp)
@@ -149,13 +145,10 @@ fun MenuScreen(
                 }
             }
 
-
-
-
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "Usuario123", // Nick del usuario
+                text = "Usuario123",
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = TextColor
@@ -164,7 +157,7 @@ fun MenuScreen(
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
-                text = "Premium", // O "Cuenta Free" según corresponda
+                text = "Premium",
                 fontWeight = FontWeight.ExtraBold,
                 fontStyle = FontStyle.Italic,
                 fontSize = 10.sp,
@@ -210,7 +203,7 @@ fun MenuScreen(
                             else -> painterResource(id = R.drawable.ic_profile)
                         },
                         contentDescription = null,
-                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(Color.Black), // Opcional: Aplicar un color
+                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(BlackGray),
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(16.dp))

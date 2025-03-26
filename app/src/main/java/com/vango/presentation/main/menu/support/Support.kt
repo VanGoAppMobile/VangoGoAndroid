@@ -47,7 +47,7 @@ fun SupportScreen(
 ) {
     var selectedSection by remember { mutableStateOf("ayuda") }
     Scaffold(
-        Modifier.padding(20.dp, 55.dp, 20.dp, 0.dp),
+        Modifier.padding(start = 20.dp, top = 17.dp, end = 20.dp, bottom = 80.dp),
         containerColor = Color.White,
 
         content = { innerPadding ->

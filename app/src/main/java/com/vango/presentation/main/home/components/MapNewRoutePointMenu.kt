@@ -175,7 +175,7 @@ fun MapNewRoutePointMenu(
                         text = "¿Qué quieres crear?",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = BlackGray
                     )
                 }
 
@@ -306,7 +306,7 @@ fun MapNewPointMenu(
                         text = "Localiza el nuevo punto",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = BlackGray
                     )
                 }
 
@@ -332,7 +332,7 @@ fun MapNewPointMenu(
                                 text = selectedAddress,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Normal,
-                                color = Color.Black
+                                color = BlackGray
                             )
                             Spacer(
                                 modifier = Modifier.height(3.dp),
@@ -341,7 +341,7 @@ fun MapNewPointMenu(
                                 text = "(${selectedPoint.latitude}, ${selectedPoint.longitude})",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Normal,
-                                color = Color.Black
+                                color = BlackGray
                             )
 
                             Spacer(modifier = Modifier.height(18.dp))
@@ -378,7 +378,7 @@ fun MapNewPointMenu(
                                                         onClearAndDismiss()
                                                     }
                                                 },
-                                            tint = Color.Black
+                                            tint = BlackGray
                                         )
 
                                     }
@@ -509,7 +509,7 @@ fun MapNewPointNameMenu(
                         text = "Añade un nombre \nal nuevo punto",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = BlackGray
                     )
                 }
 
@@ -599,7 +599,7 @@ fun MapNewPointNameMenu(
 //                                                    onClearAndDismiss()
                                                 }
                                             },
-                                        tint = Color.Black
+                                        tint = BlackGray
                                     )
 
                                 }
@@ -882,7 +882,7 @@ fun MapNewPointTagMenu(
                         text = "Etiqueta este punto",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = BlackGray
                     )
                 }
 
@@ -915,7 +915,7 @@ fun MapNewPointTagMenu(
                                 text = "Categoría principal",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.Black,
+                                color = BlackGray,
                                 modifier = Modifier
                                     .align(Alignment.Start)
                                     .padding(start = 20.dp)
@@ -977,7 +977,7 @@ fun MapNewPointTagMenu(
                                 text = "Subcategorías",
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.Black,
+                                color = BlackGray,
                                 modifier = Modifier
                                     .align(Alignment.Start)
                                     .padding(start = 20.dp)
@@ -1012,7 +1012,7 @@ fun MapNewPointTagMenu(
                                                         text = title,
                                                         fontSize = 12.sp,
                                                         fontWeight = FontWeight.Bold,
-                                                        color = Color.Black
+                                                        color = BlackGray
                                                     )
                                                     Text(
                                                         text = description,
@@ -1222,7 +1222,7 @@ fun MapNewPointConfirmMenu(
                         text = "¿Quieres crear este punto?",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = BlackGray
                     )
                 }
 
@@ -1275,7 +1275,7 @@ fun MapNewPointConfirmMenu(
                                     text = selectedName,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,
-                                    color = Color.Black
+                                    color = BlackGray
                                 )
                             }
                         }
@@ -1325,7 +1325,7 @@ fun MapNewPointConfirmMenu(
                                         text = selectedAddress,
                                         fontSize = 12.sp,
                                         fontWeight = FontWeight.Normal,
-                                        color = Color.Black
+                                        color = BlackGray
                                     )
                                 }
                                 Spacer(
@@ -1356,7 +1356,7 @@ fun MapNewPointConfirmMenu(
                                             } ?: "0.0000, 0.0000",
                                             fontSize = 12.sp,
                                             fontWeight = FontWeight.Normal,
-                                            color = Color.Black
+                                            color = BlackGray
                                         )
 
                                         Surface(
@@ -1636,7 +1636,7 @@ fun MapNewPointTagServicesMenu(
                         text = "Servicios de este punto",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = BlackGray
                     )
                 }
 
@@ -2457,7 +2457,7 @@ fun MapNewImageServiceMenu(
                                 text = "Sube fotos de este punto",
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                color = Color.Black
+                                color = BlackGray
                             )
                         }
 
@@ -2502,7 +2502,7 @@ fun MapNewImageServiceMenu(
                         text = "Sería de gran ayuda para la comunidad, que pudieras subir algunas fotos de este punto.",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Normal,
-                        color = Color.Black,
+                        color = BlackGray,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -2558,7 +2558,7 @@ fun MapNewImageServiceMenu(
                         text = "¿Tienes dudas de qué fotos subir?",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
-                        color = Color.Black,
+                        color = BlackGray,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -2842,12 +2842,12 @@ fun MapNewLastDatesMenu(
                                         .padding(start = 4.dp),
                                     textStyle = TextStyle(
                                         fontSize = 12.sp,
-                                        color = Color.Black
+                                        color = BlackGray
                                     )
                                 )
                                 Text(
                                     text = "Eur",
-                                    color = Color.Black,
+                                    color = BlackGray,
                                     fontSize = 12.sp,
                                     modifier = Modifier.padding(start = 4.dp, end = 4.dp)
                                 )
@@ -3355,7 +3355,7 @@ fun MapNewImageServiceUploadMenu(
                             text = "Sube fotos de este punto",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            color = Color.Black
+                            color = BlackGray
                         )
                     }
                 }
@@ -3370,7 +3370,7 @@ fun MapNewImageServiceUploadMenu(
                             text = "Sería de gran ayuda para la comunidad, que pudieras subir algunas fotos de este punto.",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Normal,
-                            color = Color.Black,
+                            color = BlackGray,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -3426,7 +3426,7 @@ fun MapNewImageServiceUploadMenu(
                                     text = "Foto de portada",
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color.Black,
+                                    color = BlackGray,
                                     textAlign = TextAlign.Center,
                                     modifier = Modifier.wrapContentSize()
                                 )
@@ -3452,7 +3452,7 @@ fun MapNewImageServiceUploadMenu(
                                                     images = images.drop(1)
                                                 }
                                             },
-                                        tint = Color.Black
+                                        tint = BlackGray
                                     )
                                 }
                             }
@@ -3527,7 +3527,7 @@ fun MapNewImageServiceUploadMenu(
                                                             .apply { removeAt(index) }
                                                     }
                                                 },
-                                            tint = Color.Black
+                                            tint = BlackGray
                                         )
                                     }
                                 }
@@ -3664,7 +3664,7 @@ fun MapNewImageServiceUploadMenu(
                             text = "¿Tienes dudas de qué fotos subir?",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
-                            color = Color.Black,
+                            color = BlackGray,
                             textAlign = TextAlign.Center
                         )
                     }
@@ -3885,7 +3885,7 @@ fun ButtonService(
                 text = text,
                 modifier = Modifier.padding(top = 3.dp),
                 fontSize = 10.sp,
-                color = Color.Black
+                color = BlackGray
             )
         }
 
@@ -3969,7 +3969,7 @@ fun CustomDropdown() {
 
             opciones.forEach { opcion ->
                 DropdownMenuItem(
-                    text = { Text(text = opcion, color = Color.Black) },
+                    text = { Text(text = opcion, color = BlackGray) },
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         selectedOption = opcion
@@ -4013,7 +4013,7 @@ fun CustomCheckBox(
             text = "Sin contacto",
             modifier = Modifier
                 .padding(12.dp),
-            color = Color.Black
+            color = BlackGray
         )
     }
 
@@ -4037,7 +4037,7 @@ fun CustomCheckBoxDays(
                 .clickable { onCheckedChange(!isChecked) },
             contentAlignment = Alignment.Center
         ) {
-            Text(text = day, color = Color.Black, fontSize = 12.sp)
+            Text(text = day, color = BlackGray, fontSize = 12.sp)
         }
     }
 }
@@ -4093,7 +4093,7 @@ fun CustomDropdownHour() {
 
             opciones.forEach { opcion ->
                 DropdownMenuItem(
-                    text = { Text(text = opcion, color = Color.Black, fontSize = 10.sp) },
+                    text = { Text(text = opcion, color = BlackGray, fontSize = 10.sp) },
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         selectedOption = opcion

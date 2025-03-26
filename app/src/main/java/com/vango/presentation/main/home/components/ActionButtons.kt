@@ -51,7 +51,7 @@ fun LocationActionButtons(
                 .height(50.dp)
                 .shadow(elevation = 4.dp, shape = RoundedCornerShape(13.dp)),
             shape = RoundedCornerShape(13.dp),
-            color = BackgroundUnselected
+            color = if (isLocationVisible) BackgroundButtonColor else  BackgroundUnselected
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,

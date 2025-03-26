@@ -10,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
@@ -66,6 +64,7 @@ import com.vango.presentation.main.menu.support.SupportScreen
 import com.vango.presentation.main.results.HomeList
 import com.vango.presentation.main.routes.RoutesScreen
 import com.vango.presentation.main.travels.TravelsScreen
+import com.vango.presentation.theme.BlackGray
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -230,7 +229,7 @@ fun BottomNavigationBar(
         tonalElevation = 0.dp,
         containerColor = Color(ContextCompat.getColor(context, R.color.white))
     ) {
-        val iconColorUnselected = Color.Black
+        val iconColorUnselected = BlackGray
 
         NavigationBarItem(
             modifier = Modifier.wrapContentHeight(),

@@ -56,12 +56,10 @@ class ProfileActivity : BaseActivity() {
 
 @Composable
 fun ProfileScreen(navController: NavController) {
-    // Estado para controlar qué contenido mostrar
     var selectedSection by remember { mutableStateOf("mis_datos") }
 
-
     Scaffold(
-        Modifier.padding(20.dp, 55.dp, 20.dp, 0.dp).background(Color.White),
+        modifier = Modifier.padding(start = 20.dp, bottom =  80.dp, end = 20.dp, top = 17.dp).background(Color.White),
         containerColor = Color.White,
         content = { innerPadding ->
 
@@ -140,7 +138,6 @@ fun ProfileScreen(navController: NavController) {
 
                 }
                 Spacer(modifier = Modifier.height(24.dp))
-                // Botones de navegación interna ("Mis datos", "Premium", "Aportaciones")
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -170,7 +167,6 @@ fun ProfileScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // Contenido dinámico según el botón seleccionado
                 when (selectedSection) {
                     "mis_datos" -> MyDataContent(navController = navController)
                     "premium" -> PremiumContent(navController = navController)

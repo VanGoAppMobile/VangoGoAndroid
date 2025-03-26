@@ -42,6 +42,7 @@ import com.vango.R
 import com.vango.presentation.theme.BackgroundButtonColor
 import com.vango.presentation.theme.BackgroundColorCard
 import com.vango.presentation.theme.BackgroundUnselected
+import com.vango.presentation.theme.BlackGray
 import com.vango.presentation.theme.MainColor
 import kotlinx.coroutines.launch
 
@@ -66,7 +67,7 @@ fun MapLayersMenu(
 //        Box(
 //            modifier = Modifier
 //                .fillMaxSize()
-//                .background(Color.Black.copy(alpha = 0.4f))
+//                .background(BlackGray.copy(alpha = 0.4f))
 //                .clickable(
 //                    onClick = {
 //                        scope.launch {
@@ -144,7 +145,7 @@ fun MapLayersMenu(
                         text = "Configuración del mapa",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = BlackGray
                     )
                 }
 
@@ -160,7 +161,7 @@ fun MapLayersMenu(
                             text = "Tipo de mapa",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.Black,
+                            color = BlackGray,
                             modifier = Modifier.padding(top = 10.dp, bottom = 10.dp, start = 20.dp)
                         )
 
@@ -211,7 +212,7 @@ fun MapLayersMenu(
                             text = "Opciones del mapa",
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color.Black,
+                            color = BlackGray,
                             modifier = Modifier.padding(bottom = 10.dp, start = 20.dp)
                         )
                         Row(
@@ -289,7 +290,7 @@ fun MapLayerButton(
             text = text,
             modifier = Modifier.padding(top = 6.dp),
             fontSize = 10.sp,
-            color = Color.Black,
+            color = BlackGray,
             maxLines = 3,
             textAlign = TextAlign.Center
         )
@@ -332,7 +333,7 @@ fun MapOptionButton(
             text = text,
             modifier = Modifier.padding(top = 6.dp),
             fontSize = 10.sp,
-            color = Color.Black,
+            color = BlackGray,
             maxLines = 3,
             textAlign = TextAlign.Center
         )
