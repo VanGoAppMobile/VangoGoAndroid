@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -47,6 +48,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,7 +62,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -72,7 +73,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -84,6 +84,7 @@ import com.google.firebase.storage.StorageReference
 import com.vango.R
 import com.vango.presentation.main.home.HomeViewModel
 import com.vango.presentation.theme.BackgroundButtonColor
+import com.vango.presentation.theme.BackgroundColorBadge
 import com.vango.presentation.theme.BackgroundColorCard
 import com.vango.presentation.theme.BackgroundColorImage
 import com.vango.presentation.theme.BackgroundColorList
@@ -228,8 +229,6 @@ fun MapNewRoutePointMenu(
 }
 
 
-
-
 @Composable
 fun MapNewPointMenu(
     selectedPoint: LatLng?,
@@ -238,10 +237,13 @@ fun MapNewPointMenu(
     onDismiss: () -> Unit,
     onClearAndDismiss: () -> Unit,
     onConfirm: () -> Unit,
+    onConfirmRoute: (List<Pair<LatLng?, String?>>) -> Unit,
+    onSelectedPoint: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
     val offsetY = remember { Animatable(600f) }
     val density = LocalDensity.current
+    val pointsList = remember { mutableStateListOf<Pair<LatLng?, String?>>() }
     with(density) { 48.dp.toPx() }
 
     LaunchedEffect(Unit) {
@@ -307,7 +309,7 @@ fun MapNewPointMenu(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = if(isPoint == true) "Localiza el nuevo punto" else "Localiza el primer punto de la ruta",
+                        text = if (isPoint == true) "Localiza el nuevo punto" else "Localiza el primer punto de la ruta",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
                         color = BlackGray
@@ -332,23 +334,6 @@ fun MapNewPointMenu(
                             verticalArrangement = Arrangement.Center
                         ) {
 
-                            Text(
-                                text = selectedAddress,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = BlackGray
-                            )
-                            Spacer(
-                                modifier = Modifier.height(3.dp),
-                            )
-                            Text(
-                                text = "(${selectedPoint.latitude}, ${selectedPoint.longitude})",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = BlackGray
-                            )
-
-                            Spacer(modifier = Modifier.height(18.dp))
 
 
                             Row(
@@ -356,74 +341,157 @@ fun MapNewPointMenu(
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically,
 
-                                ) {
+                            ){
 
-                                Surface(
-                                    modifier = Modifier
-                                        .width(32.dp)
-                                        .height(32.dp),
-
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = Color.Transparent,
-                                    border = BorderStroke(0.5.dp, BlackGray)
-                                ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center,
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.ex),
-                                            contentDescription = "Cerrar",
-                                            modifier = Modifier
-                                                .width(12.5.dp)
-                                                .height(14.29.dp)
-                                                .clickable {
-                                                    scope.launch {
-                                                        onClearAndDismiss()
-                                                    }
-                                                },
-                                            tint = BlackGray
-                                        )
-
+                                if(pointsList.isNotEmpty())
+                                {
+                                    pointsList.forEachIndexed { index, _ ->
+                                        Surface(
+                                            modifier = Modifier.size(30.dp),
+                                            color = BackgroundColorBadge,
+                                            shape = CircleShape
+                                        ) {
+                                            Box(
+                                                modifier = Modifier.fillMaxSize(),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Text(
+                                                    text = (index + 1).toString(),
+                                                    fontSize = 14.sp,
+                                                    fontWeight = FontWeight.Normal,
+                                                    color = Color.White
+                                                )
+                                            }
+                                        }
                                     }
                                 }
 
-                                Spacer(modifier = Modifier.width(8.dp))
 
-                                Surface(
-                                    modifier = Modifier
-                                        .width(32.dp)
-                                        .height(32.dp),
-
-                                    shape = RoundedCornerShape(10.dp),
-                                    color = MainColor,
-                                ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                        verticalArrangement = Arrangement.Center,
-                                    ) {
-                                        Icon(
-                                            painter = painterResource(id = R.drawable.check),
-                                            contentDescription = "Confirmar",
-                                            modifier = Modifier
-                                                .width(12.5.dp)
-                                                .height(14.29.dp)
-                                                .clickable {
-                                                    scope.launch {
-                                                        offsetY.animateTo(
-                                                            600f,
-                                                            animationSpec = tween(300)
-                                                        )
-                                                        onConfirm()
-                                                    }
-                                                },
-                                            tint = Color.White
-                                        )
-
-                                    }
+                                Column (){
+                                    Text(
+                                        text = selectedAddress,
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = BlackGray
+                                    )
+                                    Spacer(
+                                        modifier = Modifier.height(3.dp),
+                                    )
+                                    Text(
+                                        text = "(${selectedPoint.latitude}, ${selectedPoint.longitude})",
+                                        fontSize = 12.sp,
+                                        fontWeight = FontWeight.Normal,
+                                        color = BlackGray
+                                    )
                                 }
 
                             }
+
+
+
+
+
+
+                            if(pointsList.isEmpty()){
+
+                                Spacer(modifier = Modifier.height(18.dp))
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center,
+                                    verticalAlignment = Alignment.CenterVertically,
+
+                                    ) {
+
+                                    Surface(
+                                        modifier = Modifier
+                                            .width(32.dp)
+                                            .height(32.dp),
+
+                                        shape = RoundedCornerShape(10.dp),
+                                        color = Color.Transparent,
+                                        border = BorderStroke(0.5.dp, BlackGray)
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center,
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.ex),
+                                                contentDescription = "Cerrar",
+                                                modifier = Modifier
+                                                    .width(12.5.dp)
+                                                    .height(14.29.dp)
+                                                    .clickable {
+                                                        scope.launch {
+                                                            onClearAndDismiss()
+                                                        }
+                                                    },
+                                                tint = BlackGray
+                                            )
+
+                                        }
+                                    }
+
+                                    Spacer(modifier = Modifier.width(8.dp))
+
+                                    Surface(
+                                        modifier = Modifier
+                                            .width(32.dp)
+                                            .height(32.dp),
+
+                                        shape = RoundedCornerShape(10.dp),
+                                        color = MainColor,
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center,
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.check),
+                                                contentDescription = "Confirmar",
+                                                modifier = Modifier
+                                                    .width(12.5.dp)
+                                                    .height(14.29.dp)
+//                                                .clickable {
+//                                                    scope.launch {
+//                                                        offsetY.animateTo(
+//                                                            600f,
+//                                                            animationSpec = tween(300)
+//                                                        )
+//                                                        onConfirm()
+//                                                    }
+//                                                },
+                                                    .clickable {
+                                                        if (isPoint == true) {
+                                                            scope.launch {
+                                                                offsetY.animateTo(
+                                                                    600f,
+                                                                    animationSpec = tween(300)
+                                                                )
+                                                                onConfirm()
+                                                            }
+                                                        } else {
+                                                            pointsList.add(
+                                                                Pair(
+                                                                    selectedPoint,
+                                                                    selectedAddress
+                                                                )
+                                                            )
+//                                                        onClearAndDismiss()
+                                                        }
+                                                    },
+                                                tint = Color.White
+                                            )
+
+                                        }
+                                    }
+
+                                }
+
+                            }
+
+
                         }
 
 
@@ -432,14 +500,66 @@ fun MapNewPointMenu(
 
                 }
 
+                if (isPoint == false && pointsList.isNotEmpty()) {
 
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .clickable {
+                                scope.launch {
+                                    pointsList.add(Pair(selectedPoint, selectedAddress))
+                                    onSelectedPoint()
+                                }
+                            },
+                        shape = RoundedCornerShape(20.dp),
+                        color = MainColor
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Añadir más puntos",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .clickable {
+                                scope.launch {
+                                    offsetY.animateTo(600f, animationSpec = tween(300))
+
+                                }
+                            },
+                        shape = RoundedCornerShape(20.dp),
+                        color = BackgroundButtonColor
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "Guardar ruta",
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
-
-
-
 
 
 @Composable
@@ -1697,11 +1817,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Agua potable"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Agua potable")) {
-                                                current - "Agua potable"
-                                            } else {
-                                                current + "Agua potable"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Agua potable")) {
+                                                    current - "Agua potable"
+                                                } else {
+                                                    current + "Agua potable"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1712,11 +1833,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Electricidad"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Electricidad")) {
-                                                current - "Electricidad"
-                                            } else {
-                                                current + "Electricidad"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Electricidad")) {
+                                                    current - "Electricidad"
+                                                } else {
+                                                    current + "Electricidad"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1727,11 +1849,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Baños públicos"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Baños públicos")) {
-                                                current - "Baños públicos"
-                                            } else {
-                                                current + "Baños públicos"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Baños públicos")) {
+                                                    current - "Baños públicos"
+                                                } else {
+                                                    current + "Baños públicos"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1742,11 +1865,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Duchas"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Duchas")) {
-                                                current - "Duchas"
-                                            } else {
-                                                current + "Duchas"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Duchas")) {
+                                                    current - "Duchas"
+                                                } else {
+                                                    current + "Duchas"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1757,11 +1881,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Internet"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Internet")) {
-                                                current - "Internet"
-                                            } else {
-                                                current + "Internet"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Internet")) {
+                                                    current - "Internet"
+                                                } else {
+                                                    current + "Internet"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1772,11 +1897,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Lavandería"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Lavandería")) {
-                                                current - "Lavandería"
-                                            } else {
-                                                current + "Lavandería"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Lavandería")) {
+                                                    current - "Lavandería"
+                                                } else {
+                                                    current + "Lavandería"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1787,11 +1913,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Buena cobertura"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Buena cobertura")) {
-                                                current - "Buena cobertura"
-                                            } else {
-                                                current + "Buena cobertura"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Buena cobertura")) {
+                                                    current - "Buena cobertura"
+                                                } else {
+                                                    current + "Buena cobertura"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1802,11 +1929,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Mala Cobertura"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Mala Cobertura")) {
-                                                current - "Mala Cobertura"
-                                            } else {
-                                                current + "Mala Cobertura"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Mala Cobertura")) {
+                                                    current - "Mala Cobertura"
+                                                } else {
+                                                    current + "Mala Cobertura"
+                                                }
                                         }
                                     )
                                 }
@@ -1841,11 +1969,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Aguas grises"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Aguas grises")) {
-                                                current - "Aguas grises"
-                                            } else {
-                                                current + "Aguas grises"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Aguas grises")) {
+                                                    current - "Aguas grises"
+                                                } else {
+                                                    current + "Aguas grises"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1856,11 +1985,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Aguas negras"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Aguas negras")) {
-                                                current - "Aguas negras"
-                                            } else {
-                                                current + "Aguas negras"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Aguas negras")) {
+                                                    current - "Aguas negras"
+                                                } else {
+                                                    current + "Aguas negras"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1871,11 +2001,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Parcelas con sombra"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Parcelas con sombra")) {
-                                                current - "Parcelas con sombra"
-                                            } else {
-                                                current + "Parcelas con sombra"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Parcelas con sombra")) {
+                                                    current - "Parcelas con sombra"
+                                                } else {
+                                                    current + "Parcelas con sombra"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1886,11 +2017,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Suministro de gas"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Suministro de gas")) {
-                                                current - "Suministro de gas"
-                                            } else {
-                                                current + "Suministro de gas"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Suministro de gas")) {
+                                                    current - "Suministro de gas"
+                                                } else {
+                                                    current + "Suministro de gas"
+                                                }
                                         }
                                     )
 
@@ -1927,11 +2059,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Se admiten mascotas"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Se admiten mascotas")) {
-                                                current - "Se admiten mascotas"
-                                            } else {
-                                                current + "Se admiten mascotas"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Se admiten mascotas")) {
+                                                    current - "Se admiten mascotas"
+                                                } else {
+                                                    current + "Se admiten mascotas"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -1942,11 +2075,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Instalaciones para perros"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Instalaciones para perros")) {
-                                                current - "Instalaciones para perros"
-                                            } else {
-                                                current + "Instalaciones para perros"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Instalaciones para perros")) {
+                                                    current - "Instalaciones para perros"
+                                                } else {
+                                                    current + "Instalaciones para perros"
+                                                }
                                         }
                                     )
 
@@ -1988,11 +2122,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Piscina"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Piscina")) {
-                                                current - "Piscina"
-                                            } else {
-                                                current + "Piscina"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Piscina")) {
+                                                    current - "Piscina"
+                                                } else {
+                                                    current + "Piscina"
+                                                }
                                         }
                                     )
 
@@ -2004,11 +2139,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Zona Infantil"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Zona Infantil")) {
-                                                current - "Zona Infantil"
-                                            } else {
-                                                current + "Zona Infantil"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Zona Infantil")) {
+                                                    current - "Zona Infantil"
+                                                } else {
+                                                    current + "Zona Infantil"
+                                                }
                                         }
                                     )
 
@@ -2020,11 +2156,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Cafetería"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Cafetería")) {
-                                                current - "Cafetería"
-                                            } else {
-                                                current + "Cafetería"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Cafetería")) {
+                                                    current - "Cafetería"
+                                                } else {
+                                                    current + "Cafetería"
+                                                }
                                         }
                                     )
 
@@ -2036,11 +2173,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Restaurante"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Restaurante")) {
-                                                current - "Restaurante"
-                                            } else {
-                                                current + "Restaurante"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Restaurante")) {
+                                                    current - "Restaurante"
+                                                } else {
+                                                    current + "Restaurante"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -2051,11 +2189,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Zona de barbacoa"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Zona de barbacoa")) {
-                                                current - "Zona de barbacoa"
-                                            } else {
-                                                current + "Zona de barbacoa"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Zona de barbacoa")) {
+                                                    current - "Zona de barbacoa"
+                                                } else {
+                                                    current + "Zona de barbacoa"
+                                                }
                                         }
                                     )
                                     ButtonService(
@@ -2066,11 +2205,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Supermercado"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Supermercado")) {
-                                                current - "Supermercado"
-                                            } else {
-                                                current + "Supermercado"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Supermercado")) {
+                                                    current - "Supermercado"
+                                                } else {
+                                                    current + "Supermercado"
+                                                }
                                         }
                                     )
                                 }
@@ -2106,11 +2246,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Parcelas de larga estancia"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Parcelas de larga estancia")) {
-                                                current - "Parcelas de larga estancia"
-                                            } else {
-                                                current + "Parcelas de larga estancia"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Parcelas de larga estancia")) {
+                                                    current - "Parcelas de larga estancia"
+                                                } else {
+                                                    current + "Parcelas de larga estancia"
+                                                }
                                         }
                                     )
 
@@ -2122,11 +2263,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Bungalows"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Bungalows")) {
-                                                current - "Bungalows"
-                                            } else {
-                                                current + "Bungalows"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Bungalows")) {
+                                                    current - "Bungalows"
+                                                } else {
+                                                    current + "Bungalows"
+                                                }
                                         }
                                     )
 
@@ -2138,11 +2280,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Cabañas"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Cabañas")) {
-                                                current - "Cabañas"
-                                            } else {
-                                                current + "Cabañas"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Cabañas")) {
+                                                    current - "Cabañas"
+                                                } else {
+                                                    current + "Cabañas"
+                                                }
                                         }
                                     )
 
@@ -2154,11 +2297,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Zona de acampada"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Zona de acampada")) {
-                                                current - "Zona de acampada"
-                                            } else {
-                                                current + "Zona de acampada"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Zona de acampada")) {
+                                                    current - "Zona de acampada"
+                                                } else {
+                                                    current + "Zona de acampada"
+                                                }
                                         }
                                     )
 
@@ -2195,11 +2339,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Alquiler de bicicletas"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Alquiler de bicicletas")) {
-                                                current - "Alquiler de bicicletas"
-                                            } else {
-                                                current + "Alquiler de bicicletas"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Alquiler de bicicletas")) {
+                                                    current - "Alquiler de bicicletas"
+                                                } else {
+                                                    current + "Alquiler de bicicletas"
+                                                }
                                         }
                                     )
 
@@ -2211,11 +2356,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Actividades infantiles"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Actividades infantiles")) {
-                                                current - "Actividades infantiles"
-                                            } else {
-                                                current + "Actividades infantiles"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Actividades infantiles")) {
+                                                    current - "Actividades infantiles"
+                                                } else {
+                                                    current + "Actividades infantiles"
+                                                }
                                         }
                                     )
 
@@ -2227,11 +2373,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Actividades acuáticas"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Actividades acuáticas")) {
-                                                current - "Actividades acuáticas"
-                                            } else {
-                                                current + "Actividades acuáticas"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Actividades acuáticas")) {
+                                                    current - "Actividades acuáticas"
+                                                } else {
+                                                    current + "Actividades acuáticas"
+                                                }
                                         }
                                     )
 
@@ -2243,11 +2390,12 @@ fun MapNewPointTagServicesMenu(
                                         isSelected = selectedServices.value.contains("Excursiones guiadas"),
                                         onClick = {
                                             val current = selectedServices.value
-                                            selectedServices.value = if (current.contains("Excursiones guiadas")) {
-                                                current - "Excursiones guiadas"
-                                            } else {
-                                                current + "Excursiones guiadas"
-                                            }
+                                            selectedServices.value =
+                                                if (current.contains("Excursiones guiadas")) {
+                                                    current - "Excursiones guiadas"
+                                                } else {
+                                                    current + "Excursiones guiadas"
+                                                }
                                         }
                                     )
 
@@ -3111,7 +3259,8 @@ fun MapNewLastDatesMenu(
                                         latitude = point.latitude,
                                         longitude = point.longitude,
                                         address = selectedAddress ?: "Unknown address",
-                                        pricePerDay = textValue.takeIf { it.isNotEmpty() }?.toDoubleOrNull()
+                                        pricePerDay = textValue.takeIf { it.isNotEmpty() }
+                                            ?.toDoubleOrNull()
                                     )
 //                                    viewModel.updateCurrentLocation(point)
                                 }
@@ -3156,7 +3305,7 @@ fun MapNewImageServiceUploadMenu(
     initialImages: List<Uri> = emptyList(),
     onDismiss: () -> Unit,
     onConfirm: (List<String>) -> Unit,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
 ) {
     val scope = rememberCoroutineScope()
     val offsetY = remember { Animatable(600f) }
@@ -3180,7 +3329,8 @@ fun MapNewImageServiceUploadMenu(
             try {
                 val uploadTask = imageRef.putFile(uri)
                 uploadTask.addOnProgressListener { snapshot ->
-                    val progress = (100.0 * snapshot.bytesTransferred / snapshot.totalByteCount).toFloat()
+                    val progress =
+                        (100.0 * snapshot.bytesTransferred / snapshot.totalByteCount).toFloat()
                     uploadProgress = uploadProgress + (uri to progress)
                 }
                 uploadTask.await()
@@ -3202,7 +3352,8 @@ fun MapNewImageServiceUploadMenu(
                 val newImages = (images + it).take(10)
                 images = newImages
                 scope.launch {
-                    val newUris = it.filter { uri -> !imageUrls.any { url -> url.contains(uri.toString()) } }
+                    val newUris =
+                        it.filter { uri -> !imageUrls.any { url -> url.contains(uri.toString()) } }
                     val urls = uploadImagesToFirebase(newUris)
                     imageUrls = imageUrls + urls
                 }
@@ -3240,7 +3391,6 @@ fun MapNewImageServiceUploadMenu(
             isUploading = false
         }
     }
-
 
 
 //    suspend fun uploadImagesToFirebase(images: List<Uri>): List<String> {
@@ -3748,7 +3898,7 @@ fun LinearProgressIndicator(
     trackColor: Color = ProgressIndicatorDefaults.linearTrackColor,
     strokeCap: StrokeCap = ProgressIndicatorDefaults.LinearStrokeCap,
     gapSize: Dp = ProgressIndicatorDefaults.LinearIndicatorTrackGapSize,
-){
+) {
 
 }
 
@@ -3870,7 +4020,10 @@ fun ButtonService(
                 .width(25.dp)
                 .height(25.dp),
             shape = RoundedCornerShape(8.dp),
-            border = if(isSelected) BorderStroke(3.dp, YellowMelow) else BorderStroke(1.dp, Color.LightGray),
+            border = if (isSelected) BorderStroke(3.dp, YellowMelow) else BorderStroke(
+                1.dp,
+                Color.LightGray
+            ),
             color = Color.White,
         ) {
             Row(
@@ -3882,7 +4035,7 @@ fun ButtonService(
                     painter = painterResource(id = iconRes),
                     contentDescription = text,
                     modifier = Modifier.size(25.dp),
-                    tint = if(isSelected) YellowMelow else BlackGray
+                    tint = if (isSelected) YellowMelow else BlackGray
                 )
             }
         }

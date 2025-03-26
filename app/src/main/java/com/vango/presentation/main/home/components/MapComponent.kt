@@ -128,7 +128,6 @@ fun MapComponent(
     selectedOption: MapOption?,
 ) {
     val context = LocalContext.current
-    Log.d("MapComponent", "NearbyPlaces recibido: $nearbyPlaces")
     val mapStyleOptions = remember {
         MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
     }

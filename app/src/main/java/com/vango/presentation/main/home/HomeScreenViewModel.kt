@@ -117,8 +117,7 @@ class HomeViewModel @Inject constructor(
                     source = null
                 )
                 _nearbyPlaces.value = _nearbyPlaces.value + newPoint
-                Log.d("HomeViewModel", "Punto creado: $newPoint")
-                Log.d("HomeViewModel", "NearbyPlaces actualizado: ${_nearbyPlaces.value}")
+
 
                 clearSelectedPoint()
                 photoUrls.clear()
@@ -126,6 +125,14 @@ class HomeViewModel @Inject constructor(
             } catch (e: Exception) {
                 _errorMessage.value = "Error al guardar el punto: ${e.message}"
             }
+        }
+    }
+
+    fun savePoints(points: List<Pair<LatLng?, String?>>) {
+        if (points.size == 1) {
+            Log.d("HomeViewModel", "Nuevo punto guardado: ${points[0]}")
+        } else {
+            Log.d("HomeViewModel", "Ruta guardada con ${points.size} puntos: $points")
         }
     }
 

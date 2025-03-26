@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -108,6 +109,7 @@ fun HomeScreen(
     var showPlaceList by remember { mutableStateOf(false) }
     var lastSearchedPosition by remember { mutableStateOf(currentLocation) }
     var showSearchHereButton by remember { mutableStateOf(false) }
+    val mapPoints = remember { mutableStateListOf<Pair<LatLng?, String?>>() }
 
     LaunchedEffect(Unit) {
         locationPermission.launchPermissionRequest()
@@ -145,7 +147,6 @@ fun HomeScreen(
             currentMapCenter.latitude, currentMapCenter.longitude,
             distance
         )
-        Log.d("HomeScreen", "Distancia: ${distance[0]}, NearbyPlaces: ${nearbyPlaces.size}")
         showSearchHereButton = distance[0] > 500f
     }
 
@@ -457,6 +458,13 @@ fun HomeScreen(
                     showMapNewPointMenu = false
                     showMapNewPointNameMenu = true
                 },
+                onConfirmRoute = { points ->
+                    mapPoints.addAll(points)
+
+                },
+                onSelectedPoint = {
+                    isSelectingPoint = true
+                }
             )
         }
 
@@ -552,6 +560,7 @@ fun HomeScreen(
                     images = selectedImages
                     showMapNewImageServiceUploadMenu = true
                 }
+
             )
         }
 
@@ -572,6 +581,7 @@ fun HomeScreen(
                 },
                 initialImages = images,
                 viewModel = viewModel
+
             )
         }
 
