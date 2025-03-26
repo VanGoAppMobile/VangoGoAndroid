@@ -8,6 +8,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -20,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -32,7 +34,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -222,127 +227,262 @@ fun BottomNavigationBar(
 ) {
     val context = LocalContext.current
     val colorMain = Color(ContextCompat.getColor(context, R.color.color_emphasis))
-    NavigationBar(
+    val iconColorUnselected = BlackGray
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(85.dp),
-        tonalElevation = 0.dp,
-        containerColor = Color(ContextCompat.getColor(context, R.color.white))
+            .height(85.dp)
+            .background(Color(ContextCompat.getColor(context, R.color.white)))
+            .shadow(
+                elevation = 8.dp,
+                shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp),
+                clip = false
+            )
     ) {
-        val iconColorUnselected = BlackGray
 
-        NavigationBarItem(
-            modifier = Modifier.wrapContentHeight(),
-            icon = {
-                Icon(
-                    painter = if (currentRoute == "home" || currentRoute == "results") painterResource(id = R.drawable.home_fill) else painterResource(
-                        id = R.drawable.home
-                    ),
-                    modifier = Modifier.size(25.dp),
-                    contentDescription = "Inicio",
-                    tint = if (currentRoute == "home" || currentRoute == "results") colorMain else iconColorUnselected
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .align(Alignment.TopCenter)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.1f),
+                            Color.Transparent
+                        )
+                    )
                 )
-            },
-            label = {
-                Text(
-                    text = "Inicio",
-                    fontSize = 9.sp,
-                    fontWeight = if (currentRoute == "home" || currentRoute == "results") FontWeight.Bold else FontWeight.Normal,
-
-                    color = if (currentRoute == "home" || currentRoute == "results") colorMain else iconColorUnselected
-
-                )
-            },
-            selected = currentRoute == "home",
-            onClick = { onItemSelected("home") },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
-            )
-        )
-        NavigationBarItem(
-            modifier = Modifier.wrapContentHeight(),
-            icon = {
-                Icon(
-                    painter = if (currentRoute == "routes") painterResource(id = R.drawable.ruta_fill) else painterResource(
-                        id = R.drawable.ruta
-                    ),
-                    modifier = Modifier.size(25.dp),
-                    contentDescription = "Mis rutas",
-                    tint = if (currentRoute == "routes") colorMain else iconColorUnselected
-                )
-            },
-            label = {
-                Text(
-                    text = "Mis rutas",
-                    fontWeight = if (currentRoute == "routes") FontWeight.Bold else FontWeight.Normal,
-
-                    fontSize = 9.sp,
-                    color = if (currentRoute == "routes") colorMain else iconColorUnselected
-                )
-            },
-            selected = currentRoute == "routes",
-            onClick = { onItemSelected("routes") },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
-            )
-        )
-        NavigationBarItem(
-            modifier = Modifier.wrapContentHeight(),
-
-            icon = {
-                Icon(
-                    painter = if (currentRoute == "travels") painterResource(id = R.drawable.travel_fill) else painterResource(
-                        id = R.drawable.travel
-                    ),
-                    modifier = Modifier.size(25.dp),
-                    contentDescription = "Mis viajes",
-                    tint = if (currentRoute == "travels") colorMain else iconColorUnselected
-                )
-            },
-            label = {
-                Text(
-                    "Mis viajes",
-                    fontSize = 9.sp,
-                    fontWeight = if (currentRoute == "travels") FontWeight.Bold else FontWeight.Normal,
-
-                    color = if (currentRoute == "travels") colorMain else iconColorUnselected
-                )
-            },
-            selected = currentRoute == "travels",
-            onClick = { onItemSelected("travels") },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
-            )
         )
 
-        NavigationBarItem(
-            modifier = Modifier.wrapContentHeight(),
-
-            icon = {
-                Icon(
-                    painter = if (currentRoute == "menu") painterResource(id = R.drawable.menu_fill) else painterResource(
-                        id = R.drawable.menu
-                    ),
-                    modifier = Modifier.size(25.dp),
-                    contentDescription = "Menú",
-                    tint = if (currentRoute == "menu"||currentRoute == "profile"||currentRoute == "notifications"||currentRoute == "favorites"||currentRoute == "settings"||currentRoute == "support"||currentRoute == "logout") colorMain else iconColorUnselected
+        NavigationBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(85.dp)
+                .align(Alignment.Center), // Centra el NavigationBar dentro del Box
+            tonalElevation = 0.dp, // Sin elevación adicional en el NavigationBar
+            containerColor = Color(ContextCompat.getColor(context, R.color.white))
+        ) {
+            NavigationBarItem(
+                modifier = Modifier.wrapContentHeight(),
+                icon = {
+                    Icon(
+                        painter = if (currentRoute == "home" || currentRoute == "results") painterResource(id = R.drawable.home_fill) else painterResource(id = R.drawable.home),
+                        modifier = Modifier.size(25.dp),
+                        contentDescription = "Inicio",
+                        tint = if (currentRoute == "home" || currentRoute == "results") colorMain else iconColorUnselected
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Inicio",
+                        fontSize = 9.sp,
+                        fontWeight = if (currentRoute == "home" || currentRoute == "results") FontWeight.Bold else FontWeight.Normal,
+                        color = if (currentRoute == "home" || currentRoute == "results") colorMain else iconColorUnselected
+                    )
+                },
+                selected = currentRoute == "home",
+                onClick = { onItemSelected("home") },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.Transparent
                 )
-            },
-            label = {
-                Text(
-                    text = "Menú",
-                    fontSize = 9.sp,
-                    fontWeight = if (currentRoute == "menu") FontWeight.Bold else FontWeight.Normal,
-                    color = if (currentRoute == "menu"||currentRoute == "profile"||currentRoute == "notifications"||currentRoute == "favorites"||currentRoute == "settings"||currentRoute == "support"||currentRoute == "logout") colorMain else iconColorUnselected
-                )
-            },
-            selected = currentRoute == "menu",
-            onClick = { onItemSelected("menu") },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent
             )
-        )
+            NavigationBarItem(
+                modifier = Modifier.wrapContentHeight(),
+                icon = {
+                    Icon(
+                        painter = if (currentRoute == "routes") painterResource(id = R.drawable.ruta_fill) else painterResource(id = R.drawable.ruta),
+                        modifier = Modifier.size(25.dp),
+                        contentDescription = "Mis rutas",
+                        tint = if (currentRoute == "routes") colorMain else iconColorUnselected
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Mis rutas",
+                        fontWeight = if (currentRoute == "routes") FontWeight.Bold else FontWeight.Normal,
+                        fontSize = 9.sp,
+                        color = if (currentRoute == "routes") colorMain else iconColorUnselected
+                    )
+                },
+                selected = currentRoute == "routes",
+                onClick = { onItemSelected("routes") },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.Transparent
+                )
+            )
+            NavigationBarItem(
+                modifier = Modifier.wrapContentHeight(),
+                icon = {
+                    Icon(
+                        painter = if (currentRoute == "travels") painterResource(id = R.drawable.travel_fill) else painterResource(id = R.drawable.travel),
+                        modifier = Modifier.size(25.dp),
+                        contentDescription = "Mis viajes",
+                        tint = if (currentRoute == "travels") colorMain else iconColorUnselected
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Mis viajes",
+                        fontSize = 9.sp,
+                        fontWeight = if (currentRoute == "travels") FontWeight.Bold else FontWeight.Normal,
+                        color = if (currentRoute == "travels") colorMain else iconColorUnselected
+                    )
+                },
+                selected = currentRoute == "travels",
+                onClick = { onItemSelected("travels") },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.Transparent
+                )
+            )
+            NavigationBarItem(
+                modifier = Modifier.wrapContentHeight(),
+                icon = {
+                    Icon(
+                        painter = if (currentRoute == "menu" || currentRoute == "profile" || currentRoute == "notifications" || currentRoute == "favorites" || currentRoute == "settings" || currentRoute == "support" || currentRoute == "logout") painterResource(id = R.drawable.menu_fill) else painterResource(id = R.drawable.menu),
+                        modifier = Modifier.size(25.dp),
+                        contentDescription = "Menú",
+                        tint = if (currentRoute == "menu" || currentRoute == "profile" || currentRoute == "notifications" || currentRoute == "favorites" || currentRoute == "settings" || currentRoute == "support" || currentRoute == "logout") colorMain else iconColorUnselected
+                    )
+                },
+                label = {
+                    Text(
+                        text = "Menú",
+                        fontSize = 9.sp,
+                        fontWeight = if (currentRoute == "menu" || currentRoute == "profile" || currentRoute == "notifications" || currentRoute == "favorites" || currentRoute == "settings" || currentRoute == "support" || currentRoute == "logout") FontWeight.Bold else FontWeight.Normal,
+                        color = if (currentRoute == "menu" || currentRoute == "profile" || currentRoute == "notifications" || currentRoute == "favorites" || currentRoute == "settings" || currentRoute == "support" || currentRoute == "logout") colorMain else iconColorUnselected
+                    )
+                },
+                selected = currentRoute == "menu",
+                onClick = { onItemSelected("menu") },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.Transparent
+                )
+            )
+        }
     }
+
+//    NavigationBar(
+//        modifier = modifier
+//            .fillMaxWidth()
+//            .height(85.dp),
+//        tonalElevation = 0.dp,
+//        containerColor = Color(ContextCompat.getColor(context, R.color.white))
+//    ) {
+//
+//        NavigationBarItem(
+//            modifier = Modifier.wrapContentHeight(),
+//            icon = {
+//                Icon(
+//                    painter = if (currentRoute == "home" || currentRoute == "results") painterResource(id = R.drawable.home_fill) else painterResource(
+//                        id = R.drawable.home
+//                    ),
+//                    modifier = Modifier.size(25.dp),
+//                    contentDescription = "Inicio",
+//                    tint = if (currentRoute == "home" || currentRoute == "results") colorMain else iconColorUnselected
+//                )
+//            },
+//            label = {
+//                Text(
+//                    text = "Inicio",
+//                    fontSize = 9.sp,
+//                    fontWeight = if (currentRoute == "home" || currentRoute == "results") FontWeight.Bold else FontWeight.Normal,
+//
+//                    color = if (currentRoute == "home" || currentRoute == "results") colorMain else iconColorUnselected
+//
+//                )
+//            },
+//            selected = currentRoute == "home",
+//            onClick = { onItemSelected("home") },
+//            colors = NavigationBarItemDefaults.colors(
+//                indicatorColor = Color.Transparent
+//            )
+//        )
+//        NavigationBarItem(
+//            modifier = Modifier.wrapContentHeight(),
+//            icon = {
+//                Icon(
+//                    painter = if (currentRoute == "routes") painterResource(id = R.drawable.ruta_fill) else painterResource(
+//                        id = R.drawable.ruta
+//                    ),
+//                    modifier = Modifier.size(25.dp),
+//                    contentDescription = "Mis rutas",
+//                    tint = if (currentRoute == "routes") colorMain else iconColorUnselected
+//                )
+//            },
+//            label = {
+//                Text(
+//                    text = "Mis rutas",
+//                    fontWeight = if (currentRoute == "routes") FontWeight.Bold else FontWeight.Normal,
+//
+//                    fontSize = 9.sp,
+//                    color = if (currentRoute == "routes") colorMain else iconColorUnselected
+//                )
+//            },
+//            selected = currentRoute == "routes",
+//            onClick = { onItemSelected("routes") },
+//            colors = NavigationBarItemDefaults.colors(
+//                indicatorColor = Color.Transparent
+//            )
+//        )
+//        NavigationBarItem(
+//            modifier = Modifier.wrapContentHeight(),
+//
+//            icon = {
+//                Icon(
+//                    painter = if (currentRoute == "travels") painterResource(id = R.drawable.travel_fill) else painterResource(
+//                        id = R.drawable.travel
+//                    ),
+//                    modifier = Modifier.size(25.dp),
+//                    contentDescription = "Mis viajes",
+//                    tint = if (currentRoute == "travels") colorMain else iconColorUnselected
+//                )
+//            },
+//            label = {
+//                Text(
+//                    "Mis viajes",
+//                    fontSize = 9.sp,
+//                    fontWeight = if (currentRoute == "travels") FontWeight.Bold else FontWeight.Normal,
+//
+//                    color = if (currentRoute == "travels") colorMain else iconColorUnselected
+//                )
+//            },
+//            selected = currentRoute == "travels",
+//            onClick = { onItemSelected("travels") },
+//            colors = NavigationBarItemDefaults.colors(
+//                indicatorColor = Color.Transparent
+//            )
+//        )
+//
+//        NavigationBarItem(
+//            modifier = Modifier.wrapContentHeight(),
+//
+//            icon = {
+//                Icon(
+//                    painter = if (currentRoute == "menu") painterResource(id = R.drawable.menu_fill) else painterResource(
+//                        id = R.drawable.menu
+//                    ),
+//                    modifier = Modifier.size(25.dp),
+//                    contentDescription = "Menú",
+//                    tint = if (currentRoute == "menu"||currentRoute == "profile"||currentRoute == "notifications"||currentRoute == "favorites"||currentRoute == "settings"||currentRoute == "support"||currentRoute == "logout") colorMain else iconColorUnselected
+//                )
+//            },
+//            label = {
+//                Text(
+//                    text = "Menú",
+//                    fontSize = 9.sp,
+//                    fontWeight = if (currentRoute == "menu") FontWeight.Bold else FontWeight.Normal,
+//                    color = if (currentRoute == "menu"||currentRoute == "profile"||currentRoute == "notifications"||currentRoute == "favorites"||currentRoute == "settings"||currentRoute == "support"||currentRoute == "logout") colorMain else iconColorUnselected
+//                )
+//            },
+//            selected = currentRoute == "menu",
+//            onClick = { onItemSelected("menu") },
+//            colors = NavigationBarItemDefaults.colors(
+//                indicatorColor = Color.Transparent
+//            )
+//        )
+//    }
 }
 
 

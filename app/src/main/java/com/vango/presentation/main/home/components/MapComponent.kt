@@ -1712,7 +1712,7 @@ fun FullScreenPlaceList(
                         }
 
                         Surface(
-                            color = if (selectedFilter == "Camping") MainColor else Color.White,
+                            color = if (selectedFilter == "Camping") BackgroundButtonColor else Color.White,
                             modifier = Modifier.size(60.dp),
                             shape = RoundedCornerShape(11.dp),
                             border = if (selectedFilter == "Camping") BorderStroke(1.dp, MainColor) else BorderStroke(1.dp, Color.LightGray)
@@ -1742,7 +1742,7 @@ fun FullScreenPlaceList(
                         }
 
                         Surface(
-                            color = if (selectedFilter == "Parking") MainColor else Color.White,
+                            color = if (selectedFilter == "Parking") BackgroundButtonColor else Color.White,
                             modifier = Modifier.size(60.dp),
                             shape = RoundedCornerShape(11.dp),
                             border = if (selectedFilter == "Parking") BorderStroke(1.dp, MainColor) else BorderStroke(1.dp, Color.LightGray)
@@ -1772,7 +1772,7 @@ fun FullScreenPlaceList(
                         }
 
                         Surface(
-                            color = if (selectedFilter == "Lavandería") MainColor else Color.White,
+                            color = if (selectedFilter == "Lavandería") BackgroundButtonColor else Color.White,
                             modifier = Modifier.size(60.dp),
                             shape = RoundedCornerShape(11.dp),
                             border = if (selectedFilter == "Lavandería") BorderStroke(1.dp, MainColor) else BorderStroke(1.dp, Color.LightGray)
@@ -1802,7 +1802,7 @@ fun FullScreenPlaceList(
                         }
 
                         Surface(
-                            color = if (selectedFilter == "Gasolinera") MainColor else Color.White,
+                            color = if (selectedFilter == "Gasolinera") BackgroundButtonColor else Color.White,
                             modifier = Modifier.size(60.dp),
                             shape = RoundedCornerShape(11.dp),
                             border = if (selectedFilter == "Gasolinera") BorderStroke(1.dp, MainColor) else BorderStroke(1.dp, Color.LightGray)
@@ -1833,7 +1833,7 @@ fun FullScreenPlaceList(
                         }
 
                         Surface(
-                            color = if (selectedFilter == "Hospital") MainColor else Color.White,
+                            color = if (selectedFilter == "Hospital") BackgroundButtonColor else Color.White,
                             modifier = Modifier.size(60.dp),
                             shape = RoundedCornerShape(11.dp),
                             border = if (selectedFilter == "Hospital") BorderStroke(1.dp, MainColor) else BorderStroke(1.dp, Color.LightGray)
