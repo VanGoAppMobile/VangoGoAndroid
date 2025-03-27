@@ -394,6 +394,43 @@ fun HomeScreen(
             )
         }
 
+        if (showMapNewPointMenu) {
+            MapNewPointMenu(
+                selectedPoint = viewModel.selectedPoint.value,
+                selectedAddress = viewModel.selectedAddress.value,
+                onDismiss = {
+                    showMapNewPointMenu = false
+                    showBottomActionButtons = true
+                    isSelectingPoint = false
+                    viewModel.clearSelectedPoint()
+                },
+                onClearAndDismiss = {
+                    viewModel.clearSelectedPoint()
+                    isSelectingPoint = true
+                    showBottomActionButtons = false
+                    showMapNewPointMenu = false
+                    scope.launch {
+                        delay(100)
+                        showMapNewPointMenu = true
+                    }
+                },
+                isPoint = isSelectingPoint,
+                onConfirm = {
+                    showMapNewPointMenu = false
+                },
+                onConfirmRoute = { points ->
+                    mapPoints.addAll(points)
+                    showMapNewPointMenu = false
+                    Log.d("HomeScreen", "Route confirmed with points: $points")
+                },
+                onSelectedPoint = {
+                    isSelectingPoint = true
+                },
+                pointsList = mapPoints,
+                viewModel = viewModel
+            )
+        }
+
         if (showPlaceList) {
             FullScreenPlaceList(
                 places = nearbyPlaces,
