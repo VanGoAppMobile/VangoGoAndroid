@@ -291,6 +291,7 @@ fun HomeScreen(
                 }
             },
 
+
             onMapLoadedCallback = {
                 isMapLoaded = true
             },
@@ -394,42 +395,7 @@ fun HomeScreen(
             )
         }
 
-        if (showMapNewPointMenu) {
-            MapNewPointMenu(
-                selectedPoint = viewModel.selectedPoint.value,
-                selectedAddress = viewModel.selectedAddress.value,
-                onDismiss = {
-                    showMapNewPointMenu = false
-                    showBottomActionButtons = true
-                    isSelectingPoint = false
-                    viewModel.clearSelectedPoint()
-                },
-                onClearAndDismiss = {
-                    viewModel.clearSelectedPoint()
-                    isSelectingPoint = true
-                    showBottomActionButtons = false
-                    showMapNewPointMenu = false
-                    scope.launch {
-                        delay(100)
-                        showMapNewPointMenu = true
-                    }
-                },
-                isPoint = isSelectingPoint,
-                onConfirm = {
-                    showMapNewPointMenu = false
-                },
-                onConfirmRoute = { points ->
-                    mapPoints.addAll(points)
-                    showMapNewPointMenu = false
-                    Log.d("HomeScreen", "Route confirmed with points: $points")
-                },
-                onSelectedPoint = {
-                    isSelectingPoint = true
-                },
-                pointsList = mapPoints,
-                viewModel = viewModel
-            )
-        }
+
 
         if (showPlaceList) {
             FullScreenPlaceList(
@@ -476,6 +442,43 @@ fun HomeScreen(
                 onOptionSelected = { option -> viewModel.updateMapOption(option) },
                 onDismiss = { showMapLayersMenu = false }
 
+            )
+        }
+
+        if (showMapNewPointMenu) {
+            MapNewPointMenu(
+                selectedPoint = viewModel.selectedPoint.value,
+                selectedAddress = viewModel.selectedAddress.value,
+                onDismiss = {
+                    showMapNewPointMenu = false
+                    showBottomActionButtons = true
+                    isSelectingPoint = false
+                    viewModel.clearSelectedPoint()
+                },
+                onClearAndDismiss = {
+                    showMapNewPointMenu = false
+                    isSelectingPoint = true
+                    showBottomActionButtons = false
+                    viewModel.clearSelectedPoint() // Limpiar el estado
+                    scope.launch {
+                        delay(300) // Solo reabrimos si el usuario lo pide explícitamente
+                        showMapNewPointMenu = true
+                    }
+                },
+                isPoint = isSelectingPoint,
+                onConfirm = {
+                    showMapNewPointMenu = false
+                },
+                onConfirmRoute = { points ->
+                    mapPoints.addAll(points)
+                    showMapNewPointMenu = false
+                    Log.d("HomeScreen", "Route confirmed with points: $points")
+                },
+                onSelectedPoint = {
+                    isSelectingPoint = true
+                },
+                pointsList = mapPoints,
+                viewModel = viewModel
             )
         }
 

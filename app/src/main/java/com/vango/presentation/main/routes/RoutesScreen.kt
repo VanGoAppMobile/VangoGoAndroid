@@ -68,15 +68,6 @@ fun RoutesScreen(
         verticalArrangement = Arrangement.Top
     ) {
 
-        Text(
-            text = "Hoy",
-            style = MaterialTheme.typography.headlineMedium,
-            color = BlackGray,
-            textAlign = androidx.compose.ui.text.style.TextAlign.Start
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         Box(
             modifier = modifier
                 .background(Color.White),
