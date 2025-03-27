@@ -415,6 +415,9 @@ fun PlaceCard(
     place: PlacesResponseDto,
     modifier: Modifier = Modifier
 ) {
+
+    val context = LocalContext.current
+    var isFavorite by remember { mutableStateOf(FavoritesManager.isFavorite(context, place.placeId)) }
     Card(
         modifier = modifier
             .width(329.dp)
@@ -482,8 +485,19 @@ fun PlaceCard(
 
                     Icon(
                         painter = painterResource(id = R.drawable.heart),
-                        tint = BlackGray,
-                        contentDescription = "favorite"
+                        tint = if (isFavorite) Color.Red else BlackGray,
+                        contentDescription = "favorite",
+                        modifier = Modifier
+                            .clickable {
+                                isFavorite = !isFavorite
+                                if (isFavorite) {
+                                    FavoritesManager.addFavorite(context, place)
+                                    Log.d("PlaceCard", "Added ${place.title} to favorites")
+                                } else {
+                                    place.placeId?.let { FavoritesManager.removeFavorite(context, it) }
+                                    Log.d("PlaceCard", "Removed ${place.title} from favorites")
+                                }
+                            }
                     )
                 }
 
@@ -613,6 +627,10 @@ fun PlaceCardList(
     place: PlacesResponseDto,
     modifier: Modifier = Modifier
 ) {
+
+    val context = LocalContext.current
+    var isFavorite by remember { mutableStateOf(FavoritesManager.isFavorite(context, place.placeId)) }
+
     Card(
         modifier = modifier
             .width(329.dp)
@@ -680,9 +698,20 @@ fun PlaceCardList(
 
                     Icon(
                         painter = painterResource(id = R.drawable.heart),
-                        tint = Color.Unspecified,
-                        contentDescription = "favorite",
-                        modifier = Modifier.width(19.65.dp).height(17.75.dp)
+                        contentDescription = "Favorito",
+                        tint = if (isFavorite) Color.Red else BlackGray,
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clickable {
+                                isFavorite = !isFavorite
+                                if (isFavorite) {
+                                    FavoritesManager.addFavorite(context, place)
+                                    Log.d("FullScreenPlaceCard", "Added ${place.title} to favorites")
+                                } else {
+                                    place.placeId?.let { FavoritesManager.removeFavorite(context, it) }
+                                    Log.d("FullScreenPlaceCard", "Removed ${place.title} from favorites")
+                                }
+                            }
                     )
                 }
 
@@ -827,6 +856,10 @@ fun FullScreenPlaceCard(
             position = CameraPosition.fromLatLngZoom(latLng, 15f)
         }
     }
+
+    val context = LocalContext.current
+    var isFavorite by remember { mutableStateOf(FavoritesManager.isFavorite(context, place.placeId)) }
+
     val scrollState = rememberScrollState()
     LaunchedEffect(Unit) {
         offsetY.animateTo(0f, animationSpec = tween(300))
@@ -904,13 +937,18 @@ fun FullScreenPlaceCard(
                         }
                         Icon(
                             painter = painterResource(id = R.drawable.heart),
-                            contentDescription = "Cerrar",
+                            contentDescription = "Favorito",
+                            tint = if (isFavorite) Color.Red else BlackGray,
                             modifier = Modifier
                                 .size(32.dp)
                                 .clickable {
-                                    scope.launch {
-                                        offsetY.animateTo(600f, animationSpec = tween(300))
-                                        onDismiss()
+                                    isFavorite = !isFavorite
+                                    if (isFavorite) {
+                                        FavoritesManager.addFavorite(context, place)
+                                        Log.d("FullScreenPlaceCard", "Added ${place.title} to favorites")
+                                    } else {
+                                        place.placeId?.let { FavoritesManager.removeFavorite(context, it) }
+                                        Log.d("FullScreenPlaceCard", "Removed ${place.title} from favorites")
                                     }
                                 }
                         )

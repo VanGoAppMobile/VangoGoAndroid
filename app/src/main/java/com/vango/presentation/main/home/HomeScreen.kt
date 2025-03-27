@@ -459,9 +459,9 @@ fun HomeScreen(
                     viewModel.clearSelectedPoint()
                     isSelectingPoint = true
                     showBottomActionButtons = false
-                    showMapNewPointMenu = false // Asegúrate de que el menú se cierre y reabra
+                    showMapNewPointMenu = false
                     scope.launch {
-                        delay(100) // Pequeña espera para evitar conflictos
+                        delay(100)
                         showMapNewPointMenu = true
                     }
                 },
