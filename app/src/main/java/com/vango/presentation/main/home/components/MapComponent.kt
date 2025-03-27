@@ -417,7 +417,10 @@ fun PlaceCard(
 ) {
 
     val context = LocalContext.current
-    var isFavorite by remember { mutableStateOf(FavoritesManager.isFavorite(context, place.placeId)) }
+    var isFavorite by remember(place.placeId) {
+        mutableStateOf(FavoritesManager.isFavorite(context, place.placeId))
+    }
+
     Card(
         modifier = modifier
             .width(329.dp)
@@ -487,17 +490,16 @@ fun PlaceCard(
                         painter = painterResource(id = R.drawable.heart),
                         tint = if (isFavorite) Color.Red else BlackGray,
                         contentDescription = "favorite",
-                        modifier = Modifier
-                            .clickable {
-                                isFavorite = !isFavorite
-                                if (isFavorite) {
-                                    FavoritesManager.addFavorite(context, place)
-                                    Log.d("PlaceCard", "Added ${place.title} to favorites")
-                                } else {
-                                    place.placeId?.let { FavoritesManager.removeFavorite(context, it) }
-                                    Log.d("PlaceCard", "Removed ${place.title} from favorites")
-                                }
+                        modifier = Modifier.clickable {
+                            isFavorite = !isFavorite
+                            if (isFavorite) {
+                                FavoritesManager.addFavorite(context, place)
+                                Log.d("PlaceCard", "Added ${place.title} to favorites")
+                            } else {
+                                place.placeId?.let { FavoritesManager.removeFavorite(context, it) }
+                                Log.d("PlaceCard", "Removed ${place.title} from favorites")
                             }
+                        }
                     )
                 }
 
@@ -629,8 +631,9 @@ fun PlaceCardList(
 ) {
 
     val context = LocalContext.current
-    var isFavorite by remember { mutableStateOf(FavoritesManager.isFavorite(context, place.placeId)) }
-
+    var isFavorite by remember(place.placeId) {
+        mutableStateOf(FavoritesManager.isFavorite(context, place.placeId))
+    }
     Card(
         modifier = modifier
             .width(329.dp)
@@ -698,20 +701,18 @@ fun PlaceCardList(
 
                     Icon(
                         painter = painterResource(id = R.drawable.heart),
-                        contentDescription = "Favorito",
                         tint = if (isFavorite) Color.Red else BlackGray,
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clickable {
-                                isFavorite = !isFavorite
-                                if (isFavorite) {
-                                    FavoritesManager.addFavorite(context, place)
-                                    Log.d("FullScreenPlaceCard", "Added ${place.title} to favorites")
-                                } else {
-                                    place.placeId?.let { FavoritesManager.removeFavorite(context, it) }
-                                    Log.d("FullScreenPlaceCard", "Removed ${place.title} from favorites")
-                                }
+                        contentDescription = "favorite",
+                        modifier = Modifier.clickable {
+                            isFavorite = !isFavorite
+                            if (isFavorite) {
+                                FavoritesManager.addFavorite(context, place)
+                                Log.d("PlaceCard", "Added ${place.title} to favorites")
+                            } else {
+                                place.placeId?.let { FavoritesManager.removeFavorite(context, it) }
+                                Log.d("PlaceCard", "Removed ${place.title} from favorites")
                             }
+                        }
                     )
                 }
 
@@ -858,7 +859,9 @@ fun FullScreenPlaceCard(
     }
 
     val context = LocalContext.current
-    var isFavorite by remember { mutableStateOf(FavoritesManager.isFavorite(context, place.placeId)) }
+    var isFavorite by remember(place.placeId) {
+        mutableStateOf(FavoritesManager.isFavorite(context, place.placeId))
+    }
 
     val scrollState = rememberScrollState()
     LaunchedEffect(Unit) {
