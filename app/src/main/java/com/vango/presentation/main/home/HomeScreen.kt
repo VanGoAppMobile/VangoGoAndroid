@@ -139,6 +139,9 @@ fun HomeScreen(
     var lastSearchedPosition by remember { mutableStateOf(currentLocation) }
     var showSearchHereButton by remember { mutableStateOf(false) }
     val mapPoints = remember { mutableStateListOf<Pair<LatLng?, String?>>() }
+    var isShowingFavorites by remember { mutableStateOf(false) }
+
+
     LaunchedEffect(Unit) {
         locationPermission.launchPermissionRequest()
     }
@@ -301,7 +304,8 @@ fun HomeScreen(
             onFullScreenChanged = { isFullScreenOpen = it },
             selectedOption = selectedOption,
             pointsList = mapPoints,
-            viewModel = viewModel
+            viewModel = viewModel,
+            isShowingFavorites = isShowingFavorites
 
             )
         if (!isFullScreenOpen) {
@@ -321,6 +325,8 @@ fun HomeScreen(
                 onMapLayerClick = { showMapLayersMenu = true },
                 selectedOption = selectedOption,
                 isLocationVisible = isLocationVisible,
+                isShowingFavorites = isShowingFavorites,
+                onFavoritesClick = { isShowingFavorites = it },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(end = 20.dp, top = 120.dp)

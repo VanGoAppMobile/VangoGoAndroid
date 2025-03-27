@@ -37,6 +37,8 @@ fun LocationActionButtons(
     onMapLayerClick: () -> Unit,
     selectedOption: MapOption?,
     isLocationVisible: Boolean,
+    isShowingFavorites: Boolean,
+    onFavoritesClick: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -90,22 +92,23 @@ fun LocationActionButtons(
         }
 
         Surface(
+            onClick = { onFavoritesClick(!isShowingFavorites) },
             modifier = Modifier
                 .width(50.dp)
                 .height(50.dp)
                 .shadow(elevation = 4.dp, shape = RoundedCornerShape(13.dp)),
             shape = RoundedCornerShape(13.dp),
-            color = BackgroundUnselected
+            color = if(isShowingFavorites) BackgroundButtonColor else BackgroundUnselected
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.heart_stroke),
+                    painter = if(isShowingFavorites) painterResource(id = R.drawable.heart_fill) else painterResource(id = R.drawable.heart_stroke),
                     contentDescription = "tipo de mapa",
                     modifier = Modifier.size(25.dp),
-                    tint = Color.Unspecified
+                    tint = if(isShowingFavorites) Color.White else Color.Unspecified
                 )
             }
         }

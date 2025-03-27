@@ -110,6 +110,269 @@ fun BitmapDescriptorFactory.fromResource(drawableId: Int, context: Context): Bit
     return BitmapDescriptorFactory.fromBitmap(bitmap)
 }
 
+//@Composable
+//fun MapComponent(
+//    modifier: Modifier = Modifier,
+//    cameraPositionState: CameraPositionState,
+//    currentLocation: LatLng,
+//    isLocationEnabled: Boolean,
+//    selectedLayer: MapLayer = MapLayer.NORMAL,
+//    onLocationVisibilityChanged: (Boolean) -> Unit = {},
+//    onMapClick: (LatLng) -> Unit,
+//    isSelectingPoint: Boolean = false,
+//    isShowingRoutePoint: Boolean = false,
+//    onMapLoadedCallback: () -> Unit = {},
+//    nearbyPlaces: List<PlacesResponseDto>,
+//    selectedFilterTypes: Set<Int>,
+//    onPlaceSelected: (PlacesResponseDto?) -> Unit = {},
+//    onFullScreenChanged: (Boolean) -> Unit = {},
+//    selectedOption: MapOption?,
+//    pointsList: MutableList<Pair<LatLng?, String?>>,
+//    viewModel: HomeViewModel,
+//    isShowingFavorites: Boolean
+//) {
+//    val context = LocalContext.current
+//    val mapStyleOptions = remember {
+//        MapStyleOptions.loadRawResourceStyle(context, R.raw.map_style)
+//    }
+//
+//    val mapProperties = remember(selectedLayer, selectedOption) {
+//        MapProperties(
+//            mapType = when (selectedLayer) {
+//                MapLayer.NORMAL -> MapType.NORMAL
+//                MapLayer.SATELLITE -> MapType.SATELLITE
+//                MapLayer.RELIEF -> MapType.TERRAIN
+//                MapLayer.NO_CONNECTION -> MapType.NONE
+//            },
+//            isMyLocationEnabled = isLocationEnabled,
+//            mapStyleOptions = mapStyleOptions,
+//            isTrafficEnabled = selectedOption == MapOption.TRAFFIC
+//        )
+//    }
+//
+//    val mapUiSettings = remember {
+//        MapUiSettings(
+//            compassEnabled = true,
+//            zoomControlsEnabled = false
+//        )
+//    }
+//
+//    val markerStatesMap = remember { mutableStateMapOf<String, MarkerState>() }
+//    var selectedPlace by remember { mutableStateOf<PlacesResponseDto?>(null) }
+//    var showFullScreen by remember { mutableStateOf(false) }
+//    val favorites = remember { FavoritesManager.getFavorites(context) }
+//
+//    val placesToShow = remember(nearbyPlaces, selectedFilterTypes, isShowingFavorites, favorites) {
+//        if (isShowingFavorites) {
+//            favorites // Mostrar solo favoritos
+//        } else {
+//            if (selectedFilterTypes.isEmpty()) {
+//                nearbyPlaces // Mostrar todos los lugares si no hay filtros
+//            } else {
+//                nearbyPlaces.filter { place ->
+//                    place.type in selectedFilterTypes || place.type == null // Aplicar filtros existentes
+//                }
+//            }
+//        }.also { filtered ->
+//            Log.d(
+//                "MapComponent",
+//                "Places to show: ${filtered.size}, Favorites: ${isShowingFavorites}, Filters: $selectedFilterTypes"
+//            )
+//        }
+//    }
+//
+//
+//    val filteredPlaces = remember(nearbyPlaces, selectedFilterTypes) {
+//        val filtered = if (selectedFilterTypes.isEmpty()) {
+//            nearbyPlaces
+//        } else {
+//            nearbyPlaces.filter { place ->
+//                place.type in selectedFilterTypes || place.type == null
+//            }
+//        }
+//        Log.d(
+//            "MapComponent",
+//            "NearbyPlaces: ${nearbyPlaces.size}, FilteredPlaces: ${filtered.size}, Filters: $selectedFilterTypes"
+//        )
+//        filtered.forEach { place ->
+//            Log.d(
+//                "MapComponent",
+//                "Filtered Place: ${place.title}, Type: ${place.type}, Location: ${place.location}"
+//            )
+//        }
+//        filtered
+//    }
+//
+//    LaunchedEffect(filteredPlaces) {
+//        filteredPlaces.forEach { place ->
+//            place.toLatLng()?.let { latLng ->
+//                Log.d("MapComponent", "Adding marker for ${place.title} at $latLng")
+//            } ?: Log.w("MapComponent", "toLatLng() returned null for ${place.title}")
+//        }
+//    }
+//
+//    LaunchedEffect(placesToShow) {
+//        val currentPlaceIds = placesToShow.map { it.placeId }.toSet()
+//        markerStatesMap.keys.retainAll(currentPlaceIds)
+//
+//        placesToShow.forEach { place ->
+//            place.placeId?.let { placeId ->
+//                if (!markerStatesMap.containsKey(placeId)) {
+//                    place.toLatLng()?.let { latLng ->
+//                        markerStatesMap[placeId] = MarkerState(position = latLng)
+//                    }
+//                }
+//            }
+//        }
+//    }
+//
+//    LaunchedEffect(filteredPlaces) {
+//        val currentPlaceIds = filteredPlaces.map { it.placeId }.toSet()
+//        markerStatesMap.keys.retainAll(currentPlaceIds)
+//
+//        filteredPlaces.forEach { place ->
+//            place.placeId?.let { placeId ->
+//                if (!markerStatesMap.containsKey(placeId)) {
+//                    place.toLatLng()?.let { latLng ->
+//                        Log.d("MapComponent", "Adding marker for ${place.title} at $latLng")
+//                        markerStatesMap[placeId] = MarkerState(position = latLng)
+//                    } ?: Log.w("MapComponent", "toLatLng() returned null for ${place.title}")
+//                }
+//            }
+//        }
+//    }
+//
+//    LaunchedEffect(showFullScreen) {
+//        onFullScreenChanged(showFullScreen)
+//    }
+//
+//
+//    Box(modifier = modifier.fillMaxSize()) {
+//        GoogleMap(
+//            modifier = modifier,
+//            cameraPositionState = cameraPositionState,
+//            properties = mapProperties,
+//            uiSettings = mapUiSettings,
+//            onMapLoaded = {
+//                val bounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+//                bounds?.let {
+//                    onLocationVisibilityChanged(it.contains(currentLocation))
+//                }
+//                onMapLoadedCallback()
+//            },
+//            onMapClick = { latLng ->
+//                Log.d("MapComponent", "Clicked at: $latLng")
+//                viewModel.selectPoint(latLng)
+//                onMapClick(latLng)
+//                selectedPlace = null
+//                onPlaceSelected(null)
+//            }
+//
+//        ) {
+//            if (isLocationEnabled && currentLocation.latitude != 0.0 && currentLocation.longitude != 0.0) {
+//
+//                if (!isSelectingPoint && !isShowingRoutePoint) {
+//                    Marker(
+//                        state = MarkerState(position = currentLocation),
+//                        title = "Ubicación actual"
+//                    )
+//                }
+//            }
+//
+//            filteredPlaces.forEach { place ->
+//                place.toLatLng()?.let { latLng ->
+//                    Marker(
+//                        state = MarkerState(position = latLng),
+//                        title = place.title,
+//                        snippet = place.address,
+//                        icon = when (place.type) {
+//                            0 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_camping)
+//                            1 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_parking)
+//                            2 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_hospital)
+//                            3 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_gas_station)
+//                            4 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_laundry)
+//                            else -> BitmapDescriptorFactory.defaultMarker()
+//                        },
+//                        onClick = {
+//                            selectedPlace = place
+//                            onPlaceSelected(place)
+//                            true
+//                        }
+//                    )
+//                } ?: Log.w(
+//                    "MapComponent",
+//                    "No se pudo crear marcador para ${place.title}, location inválido: ${place.location}"
+//                )
+//            }
+//
+//            pointsList.forEachIndexed { index, point ->
+//
+//                point.first?.let { latLng ->
+//                    Marker(
+//                        state = MarkerState(position = latLng),
+//                        title = "Punto ${index + 1}",
+//                        snippet = "Toca el mapa para confirmar",
+//                        icon = BitmapDescriptorFactory.defaultMarker())
+//
+//                }
+//
+//            }
+//
+//
+//            if (isSelectingPoint) {
+//                Marker(
+//                    state = MarkerState(position = cameraPositionState.position.target),
+//                    title = "Punto a seleccionar",
+//                    snippet = "Toca el mapa para confirmar",
+//                    icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_plus)
+//                )
+//            }
+//            if (isShowingRoutePoint && !isSelectingPoint) {
+//                Marker(
+//                    state = MarkerState(position = cameraPositionState.position.target),
+//                    title = "Punto a seleccionar",
+//                    snippet = "Toca el mapa para confirmar",
+//                )
+//            }
+////            if (selectedOption == MapOption.PUBLIC_TRANSPORT) {
+////                Marker(
+////                    state = MarkerState(position = currentLocation),
+////                    title = "Parada de bus cercana",
+////                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+////                )
+////            }
+//        }
+//
+//        selectedPlace?.let { place ->
+//            Log.d("MapComponent", "SelectedPlace antes de PlaceCard: $place")
+//            PlaceCard(
+//                place = place,
+//                modifier = Modifier
+//                    .align(Alignment.BottomCenter)
+//                    .padding(bottom = 100.dp)
+//                    .fillMaxWidth()
+//                    .clickable {
+//                        showFullScreen = true
+//                    }
+//            )
+//        }
+//    }
+//
+//    if (showFullScreen && selectedPlace != null) {
+//        FullScreenPlaceCard(
+//            place = selectedPlace!!,
+//            onDismiss = { showFullScreen = false }
+//        )
+//    }
+//    LaunchedEffect(cameraPositionState.position) {
+//        val bounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
+//        bounds?.let {
+//            onLocationVisibilityChanged(it.contains(currentLocation))
+//        }
+//    }
+//}
+
+
 @Composable
 fun MapComponent(
     modifier: Modifier = Modifier,
@@ -128,7 +391,8 @@ fun MapComponent(
     onFullScreenChanged: (Boolean) -> Unit = {},
     selectedOption: MapOption?,
     pointsList: MutableList<Pair<LatLng?, String?>>,
-    viewModel: HomeViewModel
+    viewModel: HomeViewModel,
+    isShowingFavorites: Boolean
 ) {
     val context = LocalContext.current
     val mapStyleOptions = remember {
@@ -150,72 +414,46 @@ fun MapComponent(
     }
 
     val mapUiSettings = remember {
-        MapUiSettings(
-            compassEnabled = true,
-            zoomControlsEnabled = false
-        )
+        MapUiSettings(compassEnabled = true, zoomControlsEnabled = false)
     }
 
     val markerStatesMap = remember { mutableStateMapOf<String, MarkerState>() }
     var selectedPlace by remember { mutableStateOf<PlacesResponseDto?>(null) }
-
     var showFullScreen by remember { mutableStateOf(false) }
+    val favorites = remember { FavoritesManager.getFavorites(context) }
 
-//    val filteredPlaces = remember(nearbyPlaces, selectedFilterTypes) {
-//        val filtered = if (selectedFilterTypes.isEmpty()) {
-//            nearbyPlaces
-//        } else {
-//            nearbyPlaces.filter { place ->
-//                place.type in selectedFilterTypes
-//            }
-//        }
-//        Log.d(
-//            "MapComponent",
-//            "NearbyPlaces: ${nearbyPlaces.size}, FilteredPlaces: ${filtered.size}, Filters: $selectedFilterTypes"
-//        )
-//        filtered.forEach { place ->
-//            Log.d(
-//                "MapComponent",
-//                "Filtered Place: ${place.title}, Type: ${place.type}, PlaceId: ${place.placeId}"
-//            )
-//        }
-//        filtered
-//    }
-
-    val filteredPlaces = remember(nearbyPlaces, selectedFilterTypes) {
-        val filtered = if (selectedFilterTypes.isEmpty()) {
-            nearbyPlaces
+    // Lugares a mostrar en el mapa, teniendo en cuenta favoritos y filtros
+    val placesToShow = remember(nearbyPlaces, selectedFilterTypes, isShowingFavorites, favorites) {
+        if (isShowingFavorites) {
+            favorites // Mostrar solo favoritos
         } else {
-            nearbyPlaces.filter { place ->
-                place.type in selectedFilterTypes || place.type == null
+            if (selectedFilterTypes.isEmpty()) {
+                nearbyPlaces // Mostrar todos los lugares si no hay filtros
+            } else {
+                nearbyPlaces.filter { place ->
+                    place.type in selectedFilterTypes || place.type == null // Aplicar filtros existentes
+                }
             }
-        }
-        Log.d(
-            "MapComponent",
-            "NearbyPlaces: ${nearbyPlaces.size}, FilteredPlaces: ${filtered.size}, Filters: $selectedFilterTypes"
-        )
-        filtered.forEach { place ->
+        }.also { filtered ->
             Log.d(
                 "MapComponent",
-                "Filtered Place: ${place.title}, Type: ${place.type}, Location: ${place.location}"
+                "Places to show: ${filtered.size}, Favorites: ${isShowingFavorites}, Filters: $selectedFilterTypes"
             )
-        }
-        filtered
-    }
-
-    LaunchedEffect(filteredPlaces) {
-        filteredPlaces.forEach { place ->
-            place.toLatLng()?.let { latLng ->
-                Log.d("MapComponent", "Adding marker for ${place.title} at $latLng")
-            } ?: Log.w("MapComponent", "toLatLng() returned null for ${place.title}")
+            filtered.forEach { place ->
+                Log.d(
+                    "MapComponent",
+                    "Showing Place: ${place.title}, Type: ${place.type}, Location: ${place.location}"
+                )
+            }
         }
     }
 
-    LaunchedEffect(filteredPlaces) {
-        val currentPlaceIds = filteredPlaces.map { it.placeId }.toSet()
+    // Actualizamos los marcadores según placesToShow
+    LaunchedEffect(placesToShow) {
+        val currentPlaceIds = placesToShow.mapNotNull { it.placeId }.toSet()
         markerStatesMap.keys.retainAll(currentPlaceIds)
 
-        filteredPlaces.forEach { place ->
+        placesToShow.forEach { place ->
             place.placeId?.let { placeId ->
                 if (!markerStatesMap.containsKey(placeId)) {
                     place.toLatLng()?.let { latLng ->
@@ -231,7 +469,6 @@ fun MapComponent(
         onFullScreenChanged(showFullScreen)
     }
 
-
     Box(modifier = modifier.fillMaxSize()) {
         GoogleMap(
             modifier = modifier,
@@ -240,28 +477,19 @@ fun MapComponent(
             uiSettings = mapUiSettings,
             onMapLoaded = {
                 val bounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
-                bounds?.let {
-                    onLocationVisibilityChanged(it.contains(currentLocation))
-                }
+                bounds?.let { onLocationVisibilityChanged(it.contains(currentLocation)) }
                 onMapLoadedCallback()
             },
             onMapClick = { latLng ->
                 Log.d("MapComponent", "Clicked at: $latLng")
-                viewModel.selectPoint(latLng) // Llama a selectPoint con las coordenadas
-                onMapClick(latLng) // Mantén la funcionalidad original
+                viewModel.selectPoint(latLng)
+                onMapClick(latLng)
                 selectedPlace = null
                 onPlaceSelected(null)
             }
-//            onMapClick = {
-//                    onMapClick(it)
-//                    Log.d("MapComponent", "Clicked at: $it")
-//
-//                selectedPlace = null
-//                onPlaceSelected(null)
-//            }
         ) {
+            // Marcador de ubicación actual
             if (isLocationEnabled && currentLocation.latitude != 0.0 && currentLocation.longitude != 0.0) {
-
                 if (!isSelectingPoint && !isShowingRoutePoint) {
                     Marker(
                         state = MarkerState(position = currentLocation),
@@ -270,39 +498,8 @@ fun MapComponent(
                 }
             }
 
-//            filteredPlaces.forEach { place ->
-//                place.placeId?.let { placeId ->
-//                    val markerState = remember(placeId) {
-//                        place.toLatLng()?.let { MarkerState(position = it) }
-//                            ?: run {
-//                                Log.w("MapComponent", "toLatLng() returned null for ${place.title}")
-//                                null
-//                            }
-//                    }
-//                    markerState?.let {
-//                        Marker(
-//                            state = it,
-//                            title = place.title,
-//                            snippet = place.address,
-//                            icon = when (place.type) {
-//                                0 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_camping)
-//                                1 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_parking)
-//                                2 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_hospital)
-//                                3 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_gas_station)
-//                                4 -> BitmapDescriptorFactory.fromResource(R.drawable.marker_laundry)
-//                                else -> null
-//                            },
-//                            onClick = {
-//                                selectedPlace = place
-//                                onPlaceSelected(place)
-//                                true
-//                            }
-//                        )
-//                    }
-//                }
-//            }
-
-            filteredPlaces.forEach { place ->
+            // Marcadores de placesToShow (favoritos o lugares filtrados)
+            placesToShow.forEach { place ->
                 place.toLatLng()?.let { latLng ->
                     Marker(
                         state = MarkerState(position = latLng),
@@ -328,20 +525,19 @@ fun MapComponent(
                 )
             }
 
+            // Marcadores de puntos de ruta
             pointsList.forEachIndexed { index, point ->
-
                 point.first?.let { latLng ->
                     Marker(
                         state = MarkerState(position = latLng),
                         title = "Punto ${index + 1}",
                         snippet = "Toca el mapa para confirmar",
-                        icon = BitmapDescriptorFactory.defaultMarker())
-
+                        icon = BitmapDescriptorFactory.defaultMarker()
+                    )
                 }
-
             }
 
-
+            // Marcador para selección de punto
             if (isSelectingPoint) {
                 Marker(
                     state = MarkerState(position = cameraPositionState.position.target),
@@ -350,22 +546,18 @@ fun MapComponent(
                     icon = BitmapDescriptorFactory.fromResource(R.drawable.marker_plus)
                 )
             }
+
+            // Marcador para punto de ruta
             if (isShowingRoutePoint && !isSelectingPoint) {
                 Marker(
                     state = MarkerState(position = cameraPositionState.position.target),
                     title = "Punto a seleccionar",
-                    snippet = "Toca el mapa para confirmar",
+                    snippet = "Toca el mapa para confirmar"
                 )
             }
-//            if (selectedOption == MapOption.PUBLIC_TRANSPORT) {
-//                Marker(
-//                    state = MarkerState(position = currentLocation),
-//                    title = "Parada de bus cercana",
-//                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-//                )
-//            }
         }
 
+        // Tarjeta del lugar seleccionado
         selectedPlace?.let { place ->
             Log.d("MapComponent", "SelectedPlace antes de PlaceCard: $place")
             PlaceCard(
@@ -374,24 +566,22 @@ fun MapComponent(
                     .align(Alignment.BottomCenter)
                     .padding(bottom = 100.dp)
                     .fillMaxWidth()
-                    .clickable {
-                        showFullScreen = true
-                    }
+                    .clickable { showFullScreen = true }
             )
         }
     }
 
+    // Pantalla completa del lugar seleccionado
     if (showFullScreen && selectedPlace != null) {
         FullScreenPlaceCard(
             place = selectedPlace!!,
             onDismiss = { showFullScreen = false }
         )
     }
+
     LaunchedEffect(cameraPositionState.position) {
         val bounds = cameraPositionState.projection?.visibleRegion?.latLngBounds
-        bounds?.let {
-            onLocationVisibilityChanged(it.contains(currentLocation))
-        }
+        bounds?.let { onLocationVisibilityChanged(it.contains(currentLocation)) }
     }
 }
 
