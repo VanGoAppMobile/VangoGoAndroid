@@ -2,6 +2,7 @@ package com.vango.di
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
@@ -14,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.util.Locale
 import javax.inject.Singleton
 
 @Module
@@ -57,6 +59,12 @@ object AppModule {
             e.printStackTrace()
             null
         }
+    }
+
+    @Provides
+    @Singleton
+    fun provideGeocoder(@ApplicationContext context: Context): Geocoder {
+        return Geocoder(context, Locale.getDefault())
     }
 
 

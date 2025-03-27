@@ -87,6 +87,7 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.vango.R
+import com.vango.presentation.main.home.HomeViewModel
 import com.vango.presentation.theme.BackgroundButtonColor
 import com.vango.presentation.theme.BackgroundColorButtonPrincipal
 import com.vango.presentation.theme.BackgroundUnselected
@@ -126,6 +127,8 @@ fun MapComponent(
     onPlaceSelected: (PlacesResponseDto?) -> Unit = {},
     onFullScreenChanged: (Boolean) -> Unit = {},
     selectedOption: MapOption?,
+    pointsList: MutableList<Pair<LatLng?, String?>>,
+    viewModel: HomeViewModel
 ) {
     val context = LocalContext.current
     val mapStyleOptions = remember {
@@ -242,11 +245,20 @@ fun MapComponent(
                 }
                 onMapLoadedCallback()
             },
-            onMapClick = {
-                onMapClick(it)
+            onMapClick = { latLng ->
+                Log.d("MapComponent", "Clicked at: $latLng")
+                viewModel.selectPoint(latLng) // Llama a selectPoint con las coordenadas
+                onMapClick(latLng) // Mantén la funcionalidad original
                 selectedPlace = null
                 onPlaceSelected(null)
             }
+//            onMapClick = {
+//                    onMapClick(it)
+//                    Log.d("MapComponent", "Clicked at: $it")
+//
+//                selectedPlace = null
+//                onPlaceSelected(null)
+//            }
         ) {
             if (isLocationEnabled && currentLocation.latitude != 0.0 && currentLocation.longitude != 0.0) {
 
@@ -316,6 +328,19 @@ fun MapComponent(
                 )
             }
 
+            pointsList.forEachIndexed { index, point ->
+
+                point.first?.let { latLng ->
+                    Marker(
+                        state = MarkerState(position = latLng),
+                        title = "Punto ${index + 1}",
+                        snippet = "Toca el mapa para confirmar",
+                        icon = BitmapDescriptorFactory.defaultMarker())
+
+                }
+
+            }
+
 
             if (isSelectingPoint) {
                 Marker(
@@ -332,7 +357,6 @@ fun MapComponent(
                     snippet = "Toca el mapa para confirmar",
                 )
             }
-
 //            if (selectedOption == MapOption.PUBLIC_TRANSPORT) {
 //                Marker(
 //                    state = MarkerState(position = currentLocation),

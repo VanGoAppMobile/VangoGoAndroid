@@ -1,3 +1,4 @@
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,11 +16,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +44,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.vango.R
+import com.vango.presentation.auth.accessAccount.ActivityAccessAccount
 import com.vango.presentation.theme.BackgroundButtonColor
 import com.vango.presentation.theme.BackgroundColorButtonPrincipal
 import com.vango.presentation.theme.BlackGray
@@ -177,13 +182,16 @@ fun MenuScreen(
                 "Mis Favoritos" to "favorites",
                 "Ajustes" to "settings",
                 "Soporte" to "support",
-                "Desconectarse" to "logout"
             )
-            HorizontalDivider(
-                modifier = Modifier.padding(horizontal = 0.dp),
-                thickness = 1.dp,
-                color = Color.Gray.copy(alpha = 0.2f)
-            )
+
+            var showLogoutDialog by remember { mutableStateOf(false) }
+            val context = LocalContext.current
+
+//            HorizontalDivider(
+//                modifier = Modifier.padding(horizontal = 0.dp),
+//                thickness = 1.dp,
+//                color = Color.Gray.copy(alpha = 0.2f)
+//            )
             options.forEach { (title, route) ->
                 Row(
                     modifier = Modifier
@@ -199,7 +207,6 @@ fun MenuScreen(
                             "favorites" -> painterResource(id = R.drawable.ic_favorites)
                             "settings" -> painterResource(id = R.drawable.ic_settings)
                             "support" -> painterResource(id = R.drawable.ic_support)
-                            "logout" -> painterResource(id = R.drawable.ic_logout)
                             else -> painterResource(id = R.drawable.ic_profile)
                         },
                         contentDescription = null,
@@ -219,6 +226,55 @@ fun MenuScreen(
                     modifier = Modifier.padding(horizontal = 0.dp),
                     thickness = 1.dp,
                     color = Color.Gray.copy(alpha = 0.2f)
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 18.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_logout),
+                    contentDescription = null,
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(BlackGray),
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = "Desconectarse",
+                    fontSize = 14.sp,
+                    color = TextColor,
+                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier.clickable { showLogoutDialog = true }
+                )
+            }
+
+            if (showLogoutDialog) {
+                AlertDialog(
+                    onDismissRequest = { showLogoutDialog = false },
+                    title = { Text(text = "Cerrar sesión") },
+                    text = { Text(text = "¿Estás seguro de que quieres cerrar sesión?") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                showLogoutDialog = false
+                                val intent = Intent(context, ActivityAccessAccount::class.java)
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                context.startActivity(intent)
+                            }
+                        ) {
+                            Text("Sí", color = MainColor)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = { showLogoutDialog = false }
+                        ) {
+                            Text("No", color = Color.Gray)
+                        }
+                    }
                 )
             }
         }

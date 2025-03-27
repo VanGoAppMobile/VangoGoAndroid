@@ -6,10 +6,14 @@ import android.location.Geocoder
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.test.core.app.ApplicationProvider
 import com.google.android.gms.maps.model.LatLng
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.vango.domain.model.SearchResult
 import com.vango.domain.usecase.location.GetUserLocationUseCase
 import com.vango.domain.usecase.places.SearchPlacesUseCase
@@ -20,11 +24,14 @@ import com.vango.shared.dtos.places.PlacesRequestDto
 import com.vango.shared.dtos.places.PlacesResponseDto
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
 
@@ -32,6 +39,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getUserLocationUseCase: GetUserLocationUseCase,
     private val searchPlacesUseCase: SearchPlacesUseCase,
+    private val geocoder: Geocoder,
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
@@ -66,8 +74,8 @@ class HomeViewModel @Inject constructor(
     private val _selectedPoint = MutableStateFlow<LatLng?>(null)
     val selectedPoint: StateFlow<LatLng?> = _selectedPoint.asStateFlow()
 
-    private val _selectedAddress = MutableStateFlow<String?>(null)
-    val selectedAddress: StateFlow<String?> = _selectedAddress.asStateFlow()
+    private val _selectedAddress = mutableStateOf<String?>("Cargando dirección...")
+    val selectedAddress: State<String?> = _selectedAddress
 
     private val _selectedName = MutableStateFlow<String?>(null)
     val selectedName: StateFlow<String?> = _selectedName.asStateFlow()
@@ -168,31 +176,68 @@ class HomeViewModel @Inject constructor(
     }
 
 
+//    fun selectPoint(latLng: LatLng) {
+//        viewModelScope.launch {
+//            _selectedPoint.value = latLng
+//            getAddressFromLatLng(latLng)
+//            delay(100)
+//        }
+//    }
+
     fun selectPoint(latLng: LatLng) {
         viewModelScope.launch {
+            Log.d("HomeViewModel", "Selecting point: $latLng")
             _selectedPoint.value = latLng
-            getAddressFromLatLng(latLng)
+            _selectedAddress.value = "Cargando dirección..."
+            val address = getAddressFromLatLng(latLng)
+            Log.d("HomeViewModel", "Address retrieved: $address")
+            _selectedAddress.value = address
         }
     }
 
-    private suspend fun getAddressFromLatLng(latLng: LatLng) {
-        try {
-            val geocoder = Geocoder(context, Locale.getDefault())
-            val addresses = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
-            } else {
-                @Suppress("DEPRECATION")
-                geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+
+    private suspend fun getAddressFromLatLng(latLng: LatLng): String? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+                addresses?.firstOrNull()?.getAddressLine(0) ?: "No se encontró dirección"
+            } catch (e: Exception) {
+                Log.e("HomeViewModel", "Error getting address: ${e.message}")
+                "Error al obtener dirección"
             }
-            if (!addresses.isNullOrEmpty()) {
-                _selectedAddress.value = addresses[0].getAddressLine(0) ?: "Unknown address"
-            } else {
-                _errorMessage.value = "No address found for this location"
-            }
-        } catch (e: Exception) {
-            _errorMessage.value = "Error getting address: ${e.message}"
         }
     }
+
+
+//    private suspend fun getAddressFromLatLng(latLng: LatLng): String? = withContext(Dispatchers.IO) {
+//        try {
+//            val addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+//            addresses?.firstOrNull()?.getAddressLine(0)
+//        } catch (e: Exception) {
+//            Log.e("HomeViewModel", "Error getting address: ${e.message}")
+//            null
+//        }
+//    }
+
+
+//    private suspend fun getAddressFromLatLng(latLng: LatLng) {
+//        try {
+//            val geocoder = Geocoder(context, Locale.getDefault())
+//            val addresses = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+//            } else {
+//                @Suppress("DEPRECATION")
+//                geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1)
+//            }
+//            if (!addresses.isNullOrEmpty()) {
+//                _selectedAddress.value = addresses[0].getAddressLine(0) ?: "Unknown address"
+//            } else {
+//                _errorMessage.value = "No address found for this location"
+//            }
+//        } catch (e: Exception) {
+//            _errorMessage.value = "Error getting address: ${e.message}"
+//        }
+//    }
 
     fun performSearch(query: String) {
         if (query.isBlank()) {
@@ -269,6 +314,43 @@ class HomeViewModel @Inject constructor(
         _selectedPoint.value = null
         _selectedAddress.value = null
         _pointName.value = null
+    }
+
+    fun saveRouteAndClear(context: Context, pointsList: MutableList<Pair<LatLng?, String?>>) {
+        val gson = Gson()
+        val json = gson.toJson(pointsList.map { point ->
+            mapOf(
+                "latitude" to point.first?.latitude,
+                "longitude" to point.first?.longitude,
+                "address" to point.second
+            )
+        })
+
+        val prefs = context.getSharedPreferences("RoutesPrefs", Context.MODE_PRIVATE)
+        with(prefs.edit()) {
+            putString("savedRoute", json)
+            apply()
+        }
+
+        Log.d("HomeViewModel", "Route saved to SharedPreferences: $json")
+
+        pointsList.clear()
+        clearSelectedPoint()
+    }
+
+    fun loadSavedRoute(context: Context): List<Pair<LatLng?, String?>> {
+        val prefs = context.getSharedPreferences("RoutesPrefs", Context.MODE_PRIVATE)
+        val json = prefs.getString("savedRoute", null) ?: return emptyList()
+        val gson = Gson()
+        val type = object : TypeToken<List<Map<String, Any?>>>() {}.type
+        val routeList: List<Map<String, Any?>> = gson.fromJson(json, type)
+
+        return routeList.map { map ->
+            val lat = map["latitude"] as? Double
+            val lng = map["longitude"] as? Double
+            val address = map["address"] as? String
+            Pair(if (lat != null && lng != null) LatLng(lat, lng) else null, address)
+        }
     }
 
     fun saveNewPoint(name: String) {
