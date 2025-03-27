@@ -612,7 +612,6 @@ fun MapNewPointMenu(
     }
 }
 
-
 @Composable
 fun MapNewPointMenu(
     selectedPoint: LatLng?,

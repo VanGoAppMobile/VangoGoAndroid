@@ -456,18 +456,19 @@ fun HomeScreen(
                     viewModel.clearSelectedPoint()
                 },
                 onClearAndDismiss = {
-                    showMapNewPointMenu = false
+                    viewModel.clearSelectedPoint()
                     isSelectingPoint = true
                     showBottomActionButtons = false
-                    viewModel.clearSelectedPoint() // Limpiar el estado
+                    showMapNewPointMenu = false // Asegúrate de que el menú se cierre y reabra
                     scope.launch {
-                        delay(300) // Solo reabrimos si el usuario lo pide explícitamente
+                        delay(100) // Pequeña espera para evitar conflictos
                         showMapNewPointMenu = true
                     }
                 },
-                isPoint = isSelectingPoint,
+                isPoint = isPoint,
                 onConfirm = {
                     showMapNewPointMenu = false
+                    showMapNewPointNameMenu = true
                 },
                 onConfirmRoute = { points ->
                     mapPoints.addAll(points)
